@@ -1,1 +1,8 @@
-include ":ktest-base"
+include ':ktest-core:ktest-util'
+include ':ktest-core:ktest-config'
+include ':ktest-core:ktest-runner'
+
+include ':ktest-integration:ktest-jackson'
+include ':ktest-integration:ktest-jsonpath'
+include ':ktest-integration:ktest-json-matchers'
+include ':ktest-integration:ktest-db'

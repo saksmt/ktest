@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':ktest-core:ktest-util')
+
+    compile 'com.fasterxml.jackson.core:jackson-core'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+
+    compileOnly 'com.jayway.jsonpath:json-path'
+}

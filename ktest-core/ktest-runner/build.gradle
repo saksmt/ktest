@@ -1,0 +1,9 @@
+dependencies {
+    compile project(':ktest-core:ktest-util')
+
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
+    compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile 'junit:junit'
+
+    testCompile 'com.natpryce:hamkrest'
+}

@@ -1,0 +1,31 @@
+dependencyManagement {
+    dependencies {
+        // Kotlin
+
+        dependency "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+        dependency "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+        // TypeSafe Config
+
+        dependency "com.typesafe:config:${versions['typesafe-config']}"
+
+        // Hamkrest
+
+        dependency "com.natpryce:hamkrest:${versions['hamkrest']}"
+
+        // JUnit
+
+        dependency "junit:junit:${versions['junit']}"
+
+        // Jackson & JSONPath
+
+        dependency "com.fasterxml.jackson.core:jackson-core:${versions['jackson']}"
+        dependency "com.fasterxml.jackson.core:jackson-databind:${versions['jackson']}"
+        dependency "com.jayway.jsonpath:json-path:${versions['json-path']}"
+
+        // DB related
+
+        dependency "org.springframework:spring-jdbc:${versions['spring']}"
+        dependency "com.zaxxer:HikariCP:${versions['HikariCP']}"
+    }
+}

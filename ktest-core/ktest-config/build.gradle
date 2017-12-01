@@ -1,0 +1,9 @@
+description = 'KTest :: Config'
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
+
+    compile project(':ktest-core:ktest-util')
+
+    compile 'com.typesafe:config'
+}

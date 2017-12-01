@@ -1,0 +1,7 @@
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-core:ktest-config')
+
+    compile 'com.zaxxer:HikariCP'
+    compile 'org.springframework:spring-jdbc'
+}
