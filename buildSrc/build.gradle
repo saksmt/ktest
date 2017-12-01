@@ -1,0 +1,15 @@
+ext.versionsFile = "${rootDir}/../dependencies.properties"
+
+apply plugin: 'run.smt.dependency-properties'
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+
+    dependencies {
+        classpath 'run.smt.gradle.plugins:dependency-properties-plugin:1.0.0'
+    }
+}

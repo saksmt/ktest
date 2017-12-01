@@ -1,0 +1,43 @@
+dependencies {
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.sksamuel.koors:koors:0.90.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    compile 'org.mockito:mockito-core:2.7.11'
+    compile 'org.reflections:reflections:0.9.10'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            pom.project {
+                name 'KotlinTest'
+                packaging 'jar'
+                description 'Kotlin Test Framework'
+                url 'http://www.github.com/kotlintest/kotlintest'
+
+                scm {
+                    connection 'scm:git:http://www.github.com/kotlintest/kotlintest/'
+                    developerConnection 'scm:git:http://github.com/sksamuel/'
+                    url 'http://www.github.com/kotlintest/kotlintest/'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'sksamuel'
+                        name 'Stephen Samuel'
+                        email 'sam@sksamuel.com'
+                    }
+                }
+            }
+        }
+    }
+}
