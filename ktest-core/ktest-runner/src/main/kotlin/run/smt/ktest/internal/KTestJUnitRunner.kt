@@ -38,7 +38,7 @@ class KTestJUnitRunner(testClass: Class<BaseSpec>) : ParentRunner<ExecutableCase
     }
 
     private fun describe(suite: Suite): Description {
-        val description = Description.createSuiteDescription(suite.name, emptyArray<Annotation>())
+        val description = Description.createSuiteDescription(suite.name, suite.annotations.toTypedArray())
         suite.nestedSuites.forEach {
             description.addChild(describe(it))
         }
@@ -76,7 +76,7 @@ class KTestJUnitRunner(testClass: Class<BaseSpec>) : ParentRunner<ExecutableCase
         val executable = child ?: return
         val case = executable.case
 
-        if (case.isActive) {
+        if (case.isActive && case.annotations.none { it is Ignore }) {
             notifier.fireTestStarted(case.description)
             executeTest(executable, notifier)
             notifier.fireTestFinished(case.description)

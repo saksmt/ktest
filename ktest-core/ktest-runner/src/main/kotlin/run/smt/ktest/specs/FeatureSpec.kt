@@ -16,6 +16,9 @@ abstract class FeatureSpec(body: FeatureSpec.() -> Unit = {}) : BaseSpec() {
         SpecBuilder.suite("Feature: $name", body)
 
     fun scenario(name: String, vararg annotations: Annotation = emptyArray(), body: () -> Unit) =
-        SpecBuilder.case("Scenario: $name", annotations.toList(), body)
+        scenario(name, annotations.toList(), body)
+
+    fun scenario(name: String, annotations: List<Annotation> = emptyList(), body: () -> Unit) =
+        SpecBuilder.case("Scenario: $name", annotations, body)
 
 }

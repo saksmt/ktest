@@ -6,6 +6,7 @@ import run.smt.ktest.util.functional.Try.*
 
 class Suite(
     val name: String,
+    internal val annotations: List<Annotation> = emptyList(),
     initializer: (Suite) -> Unit
 ) {
     internal val nestedSuites = mutableListOf<Suite>()

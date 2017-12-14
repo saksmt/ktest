@@ -15,7 +15,7 @@ be no versions for dependencies in this documentation
     2. [Utilities](core/util.md) - some utilities that can't be in other modules (IO, reflection, ...)
     3. [Config](core/config.md) - easy to use configuration for your tests in HOCON
 2. [Integration](integration/README.md) - integration layer module for external libraries/tools
-    1. Allure - integration with Allure reporting framework
+    1. [Allure](integration/allure.md) - integration with Allure reporting framework
     2. [Jackson](integration/jackson.md) - integration with Jackson JSON library
     3. [JSONPath](integration/jsonpath.md) - integration with JSONPath library
     4. [JSON matchers](integration/json-matcher.md) - smart JSON matchers based on Jackson and JSONPath with integration for HamKrest

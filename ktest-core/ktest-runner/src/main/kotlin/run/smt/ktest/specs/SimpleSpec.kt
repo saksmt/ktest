@@ -13,5 +13,6 @@ abstract class SimpleSpec(body: SimpleSpec.() -> Unit = {}) : BaseSpec() {
     }
 
     fun suite(name: String, body: () -> Unit) = SpecBuilder.suite(name, body)
-    fun test(name: String, vararg annotations: Annotation = emptyArray(), body: () -> Unit) = SpecBuilder.case(name, annotations.toList(), body)
+    fun test(name: String, vararg annotations: Annotation = emptyArray(), body: () -> Unit) = test(name, annotations.toList(), body)
+    fun test(name: String, annotations: List<Annotation> = emptyList(), body: () -> Unit) = SpecBuilder.case(name, annotations, body)
 }

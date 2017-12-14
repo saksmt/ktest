@@ -12,6 +12,9 @@ abstract class FreeSpec(body: FreeSpec.() -> Unit = {}) : BaseSpec() {
     }
 
     operator fun String.minus(body: () -> Unit) = SpecBuilder.suite(this, body)
-    operator fun String.invoke(vararg annotations: Annotation, body: () -> Unit) =
-        SpecBuilder.case(this, annotations.toList(), body)
+    operator fun String.invoke(vararg annotations: Annotation = emptyArray(), body: () -> Unit) =
+        this(annotations.toList(), body)
+
+    operator fun String.invoke(annotations: List<Annotation> = emptyList(), body: () -> Unit) =
+        SpecBuilder.case(this, annotations, body)
 }

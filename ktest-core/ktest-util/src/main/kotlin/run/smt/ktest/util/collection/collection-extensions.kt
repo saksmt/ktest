@@ -51,3 +51,14 @@ fun <L, R> Sequence<L>.crossProduct(that: Sequence<R>): Sequence<Pair<L, R>> {
         }
     }
 }
+
+fun <T> Sequence<T>.partitionBy(selector: (T) -> Boolean): Pair<Sequence<T>, Sequence<T>> {
+    return filter(selector) to filter(selector.negate())
+}
+
+inline fun <T> Iterable<T>.partitionBy(selector: (T) -> Boolean): Pair<Iterable<T>, Iterable<T>> {
+    return filter(selector) to filter(selector.negate())
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> ((T) -> Boolean).negate(): (T) -> Boolean = { !this(it) }

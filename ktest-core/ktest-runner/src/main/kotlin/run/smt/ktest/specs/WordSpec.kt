@@ -12,5 +12,6 @@ abstract class WordSpec(body: WordSpec.() -> Unit = {}) : BaseSpec() {
     }
 
     infix fun String.should(body: () -> Unit) = SpecBuilder.suite("${this@should} should", body)
-    operator fun String.invoke(vararg annotations: Annotation, body: () -> Unit) = SpecBuilder.case(this, annotations.toList(), body)
+    operator fun String.invoke(vararg annotations: Annotation, body: () -> Unit) = this(annotations.toList(), body)
+    operator fun String.invoke(annotations: List<Annotation>, body: () -> Unit) = SpecBuilder.case(this, annotations, body)
 }

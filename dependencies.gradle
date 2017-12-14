@@ -27,5 +27,8 @@ dependencyManagement {
 
         dependency "org.springframework:spring-jdbc:${versions['spring']}"
         dependency "com.zaxxer:HikariCP:${versions['HikariCP']}"
+
+        dependency "io.qameta.allure:allure-java-commons:${versions['allure.java']}"
+        dependency "io.qameta.allure:allure-junit4:${versions['allure.java']}"
     }
 }

@@ -61,9 +61,10 @@ abstract class BaseSpec {
         }
     }
 
-    protected fun <T> SpecBuilder.suite(name: String, body: () -> T) {
+    protected fun <T> SpecBuilder.suite(name: String, body: () -> T) = suite(name, emptyList(), body)
+    protected fun <T> SpecBuilder.suite(name: String, annotations: List<Annotation>, body: () -> T) {
         synchronized(this) {
-            currentSuite.addNestedSuite(Suite(sanitizeSpecName(name)) {
+            currentSuite.addNestedSuite(Suite(sanitizeSpecName(name), annotations) {
                 synchronized(this) {
                     val parentSuite = currentSuite
                     currentSuite = it
