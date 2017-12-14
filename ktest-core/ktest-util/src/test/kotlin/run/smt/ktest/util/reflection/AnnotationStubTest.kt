@@ -1,4 +1,4 @@
-package run.smt.ktest
+package run.smt.ktest.util.reflection
 
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assert
@@ -7,7 +7,6 @@ import com.natpryce.hamkrest.should.shouldMatch
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
-import run.smt.ktest.internal.util.a
 
 class AnnotationStubTest {
     @Test

@@ -10,7 +10,7 @@ import run.smt.ktest.BaseSpec
 import run.smt.ktest.Case
 import run.smt.ktest.TestCaseConfig
 import run.smt.ktest.internal.api.Suite
-import run.smt.ktest.internal.util.a
+import run.smt.ktest.util.reflection.a
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
