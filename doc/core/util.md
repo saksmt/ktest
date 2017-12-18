@@ -194,3 +194,40 @@ List of extension methods:
  * `zipWithIndex`
  * `permutations`
  * `crossProduct`
+
+### DSL keywords
+
+Package: `run.smt.ktest.util.dsl`
+
+Usage example (based on ktest-rest):
+
+```kotlin
+import run.smt.ktest.util.dsl.*
+import run.smt.ktest.rest.rest
+import run.smt.ktest.rest.url.*
+
+object Url : UrlProvider {
+    val a = "a"
+    val b = "b"
+}
+
+fun usage() {
+    val url = createUrlDsl(Url)
+
+    rest {
+        val result: String = using(url) {
+            a / b / param("c")
+        } execute {
+            GET(pathParam("c", "value"))
+        }
+
+        // alternative
+
+        val result2: String = using(url {
+            a / b / param("c")
+        }) execute {
+            GET(pathParam("c", "value"))
+        }
+    }
+}
+```

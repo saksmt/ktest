@@ -161,6 +161,26 @@ val url = createUrlDsl<MyUrls> { MyUrls(it) }
 val myUrl = url { gateway / customers / search } // = "/api/v2/customer-service/customers/search"
 // you can use `param` function to create parameters accepted by our REST component
 val myUrl = url { backend / customers / param("customerId") } // = "/customer-service-backend/customers/{customerId}"
+
+// combining this with REST simple queries and DSL-utils from ktest-utils we can get following:
+
+fun usage() {
+    rest {
+        val result: String = using(url) {
+            backend / customers / search
+        } execute {
+            GET(queryParam("criteria", "value"))
+        }
+        
+        // or we can store URL in some variable and then use it:
+        val storedUrl = url {
+            backend / customers / search
+        }
+        val result2: String = using(storedUrl) execute {
+            GET(queryParam("criteria", "value"))
+        }
+    }
+}
 ```
 
 **Motivation to expose all URLs in configuration file:**
