@@ -28,7 +28,14 @@ dependencyManagement {
         dependency "org.springframework:spring-jdbc:${versions['spring']}"
         dependency "com.zaxxer:HikariCP:${versions['HikariCP']}"
 
+        // Allure
+
         dependency "io.qameta.allure:allure-java-commons:${versions['allure.java']}"
         dependency "io.qameta.allure:allure-junit4:${versions['allure.java']}"
+
+        // RestAssured
+
+        dependency "io.rest-assured:rest-assured:${versions['rest-assured']}"
+        dependency "io.rest-assured:json-path:${versions['rest-assured']}"
     }
 }

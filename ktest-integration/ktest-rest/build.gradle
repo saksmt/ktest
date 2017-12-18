@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-integration:ktest-jackson')
+    compile project(':ktest-integration:ktest-allure')
+
+    compile 'io.rest-assured:rest-assured'
+    compileOnly 'com.jayway.jsonpath:json-path'
+}
