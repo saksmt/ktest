@@ -1,6 +1,6 @@
 # kTest
 
-kTest is integration/acceptance test oriented modular test framework in Kotlin.
+kTest is integration/acceptance/system/any other non-unit test oriented modular test framework in Kotlin.
 Inspired by [kotlintest](https://github.com/kotlintest/kotlintest), [specs2](https://github.com/etorreborre/specs2) and martians. 
 
 ## Example (with usage of all available modules)
