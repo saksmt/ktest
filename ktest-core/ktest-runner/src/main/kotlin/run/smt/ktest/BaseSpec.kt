@@ -37,32 +37,32 @@ abstract class BaseSpec {
         }
     }
 
-    protected fun SpecBuilder.addBeforeAllHook(body: () -> Unit) {
+    fun SpecBuilder.addBeforeAllHook(body: () -> Unit) {
         synchronized(this) {
             currentSuite.addInterceptor(Interceptor(before = executeOnce(body)))
         }
     }
 
-    protected fun SpecBuilder.addAfterAllHook(body: () -> Unit) {
+    fun SpecBuilder.addAfterAllHook(body: () -> Unit) {
         synchronized(this) {
             currentSuite.addInterceptor(Interceptor(after = executeOnce(body)))
         }
     }
 
-    protected fun SpecBuilder.addAfterEachHook(body: () -> Unit) {
+    fun SpecBuilder.addAfterEachHook(body: () -> Unit) {
         synchronized(this) {
             currentSuite.addInterceptor(Interceptor(before = executeEveryTime(body)))
         }
     }
 
-    protected fun SpecBuilder.addBeforeEachHook(body: () -> Unit) {
+    fun SpecBuilder.addBeforeEachHook(body: () -> Unit) {
         synchronized(this) {
             currentSuite.addInterceptor(Interceptor(after = executeEveryTime(body)))
         }
     }
 
-    protected fun <T> SpecBuilder.suite(name: String, body: () -> T) = suite(name, emptyList(), body)
-    protected fun <T> SpecBuilder.suite(name: String, annotations: List<Annotation>, body: () -> T) {
+    fun <T> SpecBuilder.suite(name: String, body: () -> T) = suite(name, emptyList(), body)
+    fun <T> SpecBuilder.suite(name: String, annotations: List<Annotation>, body: () -> T) {
         synchronized(this) {
             currentSuite.addNestedSuite(Suite(sanitizeSpecName(name), annotations) {
                 synchronized(this) {
@@ -75,7 +75,7 @@ abstract class BaseSpec {
         }
     }
 
-    protected fun SpecBuilder.case(name: String, annotations: List<Annotation>, body: () -> Unit): Case {
+    fun SpecBuilder.case(name: String, annotations: List<Annotation>, body: () -> Unit): Case {
         return synchronized(this) {
             Case(currentSuite, sanitizeSpecName(name), body, defaultTestCaseConfig, annotations)
                 .also(currentSuite::addCase)

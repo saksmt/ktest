@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-integration:ktest-jackson')
+    compile project(':ktest-integration:ktest-allure')
+    compile project(':ktest-integration:ktest-rest')
+}

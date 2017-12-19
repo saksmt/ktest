@@ -12,3 +12,4 @@ External framework/library integration modules for kTest
 5. [Allure](allure.md) - integration with Allure reporting framework
 6. RestAssured - integration with RestAssured
     1. [Core](rest.md) - core RestAssured integration
+    2. [RestTest](rest-test.md) - DSL for quick implementation of simple REST tests

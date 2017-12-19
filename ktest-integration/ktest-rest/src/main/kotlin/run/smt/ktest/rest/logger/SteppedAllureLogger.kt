@@ -36,7 +36,7 @@ class SteppedAllureLogger : Logger {
                 body?.let { attach("body", it,  contentType ?: "application/json") }
 
                 attach("headers", request.headersString, "text/plain")
-                attach("cURL", "curl -X ${request.method} ${request.uri} ${curlHeaders(request)} ${curlBody(bodyString)}")
+                attach("cURL", "curl -X ${request.method} '${request.uri}' ${curlHeaders(request)} ${curlBody(bodyString)}")
             }
 
             "response" step {

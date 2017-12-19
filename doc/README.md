@@ -21,6 +21,6 @@ be no versions for dependencies in this documentation
     4. [JSON matchers](integration/json-matcher.md) - smart JSON matchers based on Jackson and JSONPath with integration for HamKrest
     5. RestAssured - integration with RestAssured
         1. [Core](integration/rest.md) - core RestAssured integration
-        2. RestTest - DSL for quick implementation of simple REST tests
+        2. [RestTest](integration/rest-test.md) - DSL for quick implementation of simple REST tests
     6. [Spring JDBC](integration/spring-jdbc.md) - integration with Spring JDBC
     7. **Not Implemented Yet** RabbitMQ - integration with RabbitMQ
