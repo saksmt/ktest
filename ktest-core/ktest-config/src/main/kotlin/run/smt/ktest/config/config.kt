@@ -10,8 +10,8 @@ import java.io.File
 import java.time.Duration
 import kotlin.reflect.KClass
 
-private val CONFIG_PROPERTY_NAME = "configFile"
-private val DEFAULT_FILE = "tests.conf"
+private const val CONFIG_PROPERTY_NAME = "configFile"
+private const val DEFAULT_FILE = "tests.conf"
 
 private val unresolvedConfig: Config by lazy {
   val loadedConfig = loadConfig() ?: ConfigFactory.empty()

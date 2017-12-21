@@ -6,4 +6,5 @@ dependencies {
 
     testCompile 'junit:junit'
     testCompile 'com.natpryce:hamkrest'
+    testCompile 'io.kotlintest:kotlintest:2.0.7'
 }
