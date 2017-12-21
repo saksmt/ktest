@@ -1,5 +1,7 @@
 # kTest
 
+[![Build Status](https://travis-ci.org/saksmt/ktest.svg?branch=develop)](https://travis-ci.org/saksmt/ktest)
+
 kTest is integration/acceptance/system/any other non-unit test oriented modular test framework in Kotlin.
 Inspired by [kotlintest](https://github.com/kotlintest/kotlintest), [specs2](https://github.com/etorreborre/specs2) and martians. 
 
