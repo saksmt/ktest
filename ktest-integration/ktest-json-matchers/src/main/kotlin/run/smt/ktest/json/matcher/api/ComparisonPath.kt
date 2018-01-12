@@ -30,4 +30,18 @@ class ComparisonPath {
     override fun toString(): String {
         return "Expected path: $expectedPath; Actual path: $actualPath"
     }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other || (
+            other is ComparisonPath
+                && other.actualPath == actualPath
+                && other.expectedPath == expectedPath
+        )
+    }
+
+    override fun hashCode(): Int {
+        var result = expectedPath.hashCode()
+        result = 31 * result + actualPath.hashCode()
+        return result
+    }
 }
