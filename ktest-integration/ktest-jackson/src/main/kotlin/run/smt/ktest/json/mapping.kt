@@ -19,6 +19,7 @@ inline fun <reified T : Any> String.loadAsJson(): T = load().deserialize()
 fun <T : Any> String.loadAsJson(type: JavaType): T = load() deserialize type
 fun <T : Any> String.loadAsJson(type: TypeReference<T>) = load() deserialize type
 fun <T : Any> String.loadAsJson(type: TypeDSL) = load().deserialize<T>(type)
+fun String.loadAsJsonTree() = load().deserialize<JsonNode>()
 
 fun Any?.serialize(): ByteArray = mapper.writeValueAsBytes(this)
 fun Any?.dump(): String = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(this)
@@ -63,7 +64,7 @@ infix fun <R> JsonNode.mapTo(type: JavaType): R {
 }
 
 fun createJsonNode(value: Any?): JsonNode {
-    val factory = JsonNodeFactory.instance
+    val factory = mapper.nodeFactory
     return when (value) {
         null -> factory.nullNode()
         is Long -> factory.numberNode(value)

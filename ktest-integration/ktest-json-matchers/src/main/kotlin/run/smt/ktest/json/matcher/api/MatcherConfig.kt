@@ -99,4 +99,4 @@ fun matcherConfig(dsl: MatcherConfigDSL) = MatcherConfigBuilder().apply(dsl).run
 }
 
 fun jsonComparatorFor(config: MatcherConfig) = config.comparator
-fun jsonComparator(dsl: MatcherConfigDSL) = jsonComparatorFor(matcherConfig(dsl))
+fun jsonComparator(dsl: MatcherConfigDSL = {}) = jsonComparatorFor(matcherConfig(dsl))

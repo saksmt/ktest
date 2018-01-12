@@ -5,4 +5,7 @@ dependencies {
     compile project(':ktest-integration:ktest-jsonpath')
 
     compileOnly 'com.natpryce:hamkrest'
+
+    testCompile project(':ktest-core:ktest-runner')
+    testCompile 'com.natpryce:hamkrest'
 }
