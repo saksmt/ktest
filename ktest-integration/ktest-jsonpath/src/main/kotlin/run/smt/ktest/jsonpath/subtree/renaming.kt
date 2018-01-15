@@ -39,8 +39,10 @@ fun DocumentContext.rename(vararg fields: Pair<String, String>) = rename {
 fun DocumentContext.rename(dsl: SubtreeRenameDSL) = rename(createRenameRules(dsl))
 
 fun DocumentContext.rename(fields: SubtreeRenameSpec): DocumentContext {
-    return fields.fold(this) { acc, (oldFieldPath, newName) ->
-        val (parent, oldName) = extractParentAndNode(oldFieldPath)
-        acc.renameKey(parent, oldName, newName)
-    }
+    return fields
+        .filter { (oldPath, newName) -> oldPath.substring(oldPath.lastIndexOf(".") + 1) != newName }
+        .fold(this) { acc, (oldFieldPath, newName) ->
+            val (parent, oldName) = extractParentAndNode(oldFieldPath)
+            acc.renameKey(parent, oldName, newName)
+        }
 }
