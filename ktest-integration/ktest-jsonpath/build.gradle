@@ -6,4 +6,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind'
 
     compile 'com.jayway.jsonpath:json-path'
+
+    testCompile project(':ktest-core:ktest-runner')
+    testCompile 'com.natpryce:hamkrest'
 }

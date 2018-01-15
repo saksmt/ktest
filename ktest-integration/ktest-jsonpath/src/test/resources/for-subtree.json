@@ -1,0 +1,37 @@
+{
+    "config": {
+        "apps": {
+            "app0": {
+                "app2": {
+                    "core": {
+                        "datasources": {
+                            "app2": {
+                                "url": "app2_url"
+                            },
+                            "app3": {
+                                "url": "app3_url"
+                            },
+                            "app1": {
+                                "url": "app1_url"
+                            },
+                            "wont": {
+                                "be": "visible"
+                            }
+                        },
+                        "idm": {
+                            "operations": "operations",
+                            "predicates": "predicates"
+                        },
+                        "cache": "cache"
+                    },
+                    "beanValidationMapper": "beanValidationMapper",
+                    "goalSearch": "goalSearch"
+                }
+            }
+        },
+        "will": "be dropped"
+    },
+    "will": {
+        "be": "dropped"
+    }
+}

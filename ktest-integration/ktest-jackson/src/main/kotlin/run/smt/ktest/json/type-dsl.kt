@@ -1,6 +1,7 @@
 package run.smt.ktest.json
 
 import com.fasterxml.jackson.databind.JavaType
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 typealias TypeDSL = TypeBuilder.() -> JavaType
@@ -35,5 +36,5 @@ object TypeBuilder {
 
     inline fun <reified T : Any> simple() = simple(T::class)
     fun <T : Any> simple(clazz: KClass<T>) = simple(clazz.java)
-    fun <T : Any> simple(clazz: Class<T>): JavaType = typeFactory.constructSimpleType(clazz, emptyArray())
+    fun <T : Any> simple(clazz: Class<T>): JavaType = typeFactory.constructSimpleType(clazz, clazz.typeParameters.map { simple<Any>() }.toTypedArray())
 }
