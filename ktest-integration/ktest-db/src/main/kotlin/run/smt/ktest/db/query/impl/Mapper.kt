@@ -29,7 +29,7 @@ internal class Mapper<out T : Any>(private val mapTo: KClass<T>) {
             val preparedArguments = prepareArguments(arguments, matchingConstructor.parameterTypes!!)
             result = matchingConstructor.newInstance(*preparedArguments.toTypedArray())
         } catch (e: Exception) {
-            e.printStackTrace()
+            // todo: add logging
             return null
         }
         return result as? T

@@ -14,9 +14,9 @@ data class Case(
 
     internal val description: Description
         get() = Description.createTestDescription(
-            suite.name.replace('.', ' '),
+            suite.name,
             (if (config.invocations < 2) name else name + " (${config.invocations} invocations)"),
-            *(annotations + config.annotations).toSet().toTypedArray()
+            *(annotations + config.annotations + suite.parents.flatMap { it.annotations }).toSet().toTypedArray()
         )
 
     fun config(

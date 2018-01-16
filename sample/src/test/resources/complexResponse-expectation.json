@@ -1,0 +1,38 @@
+{
+    "rootObject": {
+        "level1Object": {
+            "level2Object": {
+                "level3Object": {
+                    "level4Value3": "value3"
+                },
+                "level3Value1": 1,
+                "level3Value3": "value3"
+            },
+            "level2Array": [{
+                "arrayValue": "1",
+                "arrayObject": {
+                    "arrayObjectValue": 1
+                }
+            }, {
+                "arrayValue": "4",
+                "arrayObject": {
+                    "arrayObjectValue": 4
+                }
+            }, {
+                "arrayValue": "2",
+                "arrayObject": {
+                    "arrayObjectValue": 2
+                }
+            }, {
+                "arrayValue": "3",
+                "arrayObject": {
+                    "arrayObjectValue": 3
+                }
+            }],
+            "level2Value1": 1,
+            "level2Value2": 2
+        }
+    },
+    "rootValue1": 1,
+    "rootValue3": "value3"
+}

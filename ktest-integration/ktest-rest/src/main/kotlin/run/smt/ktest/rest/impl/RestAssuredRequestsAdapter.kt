@@ -7,6 +7,7 @@ import io.restassured.config.LogConfig.logConfig
 import io.restassured.filter.Filter
 import io.restassured.http.ContentType
 import io.restassured.internal.TestSpecificationImpl
+import io.restassured.parsing.Parser
 import io.restassured.specification.RequestSpecification
 import run.smt.ktest.rest.api.RequestBuilder
 import run.smt.ktest.rest.api.RequestElement
@@ -54,7 +55,7 @@ internal class RestAssuredRequestsAdapter(
 
         val spec = TestSpecificationImpl(
             requestBuilder.build(),
-            ResponseSpecBuilder().build()
+            ResponseSpecBuilder().setDefaultParser(Parser.JSON).build()
         )
 
         if (debug) {

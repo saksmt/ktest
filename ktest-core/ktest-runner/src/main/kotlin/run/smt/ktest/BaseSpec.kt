@@ -12,13 +12,16 @@ abstract class BaseSpec {
         private set(value) {
             field = value
         }
+    internal var running = false
 
     protected open val defaultTestCaseConfig: TestCaseConfig = TestCaseConfig()
     private val closeablesInReverseOrder = LinkedList<Closeable>()
 
     fun <T : Closeable> autoClose(closeable: T): T {
-        closeablesInReverseOrder.addFirst(closeable)
-        return closeable
+        return modify {
+            closeablesInReverseOrder.addFirst(closeable)
+            closeable
+        }
     }
 
     fun before(body: () -> Unit) = SpecBuilder.addBeforeEachHook(body)
@@ -38,33 +41,33 @@ abstract class BaseSpec {
     }
 
     fun SpecBuilder.addBeforeAllHook(body: () -> Unit) {
-        synchronized(this) {
+        modify {
             currentSuite.addInterceptor(Interceptor(before = executeOnce(body)))
         }
     }
 
     fun SpecBuilder.addAfterAllHook(body: () -> Unit) {
-        synchronized(this) {
+        modify {
             currentSuite.addInterceptor(Interceptor(after = executeOnce(body)))
         }
     }
 
     fun SpecBuilder.addAfterEachHook(body: () -> Unit) {
-        synchronized(this) {
+        modify {
             currentSuite.addInterceptor(Interceptor(before = executeEveryTime(body)))
         }
     }
 
     fun SpecBuilder.addBeforeEachHook(body: () -> Unit) {
-        synchronized(this) {
+        modify {
             currentSuite.addInterceptor(Interceptor(after = executeEveryTime(body)))
         }
     }
 
     fun <T> SpecBuilder.suite(name: String, body: () -> T) = suite(name, emptyList(), body)
     fun <T> SpecBuilder.suite(name: String, annotations: List<Annotation>, body: () -> T) {
-        synchronized(this) {
-            currentSuite.addNestedSuite(Suite(sanitizeSpecName(name), annotations) {
+        modify {
+            currentSuite.addNestedSuite(Suite(sanitizeSpecName(name), annotations, currentSuite) {
                 synchronized(this) {
                     val parentSuite = currentSuite
                     currentSuite = it
@@ -76,9 +79,16 @@ abstract class BaseSpec {
     }
 
     fun SpecBuilder.case(name: String, annotations: List<Annotation>, body: () -> Unit): Case {
-        return synchronized(this) {
+        return modify {
             Case(currentSuite, sanitizeSpecName(name), body, defaultTestCaseConfig, annotations)
                 .also(currentSuite::addCase)
         }
+    }
+
+    private fun <T> modify(modifier: () -> T) = synchronized(this) {
+        if (running) {
+            throw IllegalStateException("Spec can not be modified while it is running! Usage of RestTest may cause this error if used inside test-case!")
+        }
+        modifier()
     }
 }

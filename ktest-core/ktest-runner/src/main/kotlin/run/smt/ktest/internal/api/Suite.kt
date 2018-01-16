@@ -5,10 +5,12 @@ import run.smt.ktest.internal.Interceptor
 import run.smt.ktest.util.functional.Try.*
 
 class Suite(
-    val name: String,
+    name: String,
     internal val annotations: List<Annotation> = emptyList(),
+    private val parent: Suite? = null,
     initializer: (Suite) -> Unit
 ) {
+    val name = name.replace('.', ' ')
     internal val nestedSuites = mutableListOf<Suite>()
     internal val cases = mutableListOf<Case>()
     internal val interceptors = mutableListOf<Interceptor>()
@@ -29,4 +31,7 @@ class Suite(
     fun initialize(): Throwable? {
         return initialization.value.exception
     }
+
+    internal val parents
+        get() = listOf(this) + (parent?.let(::listOf) ?: emptyList())
 }

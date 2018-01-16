@@ -9,3 +9,5 @@ include ':ktest-integration:ktest-db'
 include ':ktest-integration:ktest-allure'
 include ':ktest-integration:ktest-rest'
 include ':ktest-integration:ktest-resttest'
+
+include ':sample'

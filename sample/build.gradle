@@ -1,0 +1,71 @@
+description = "kTest :: Samples"
+
+import org.mockserver.mockserver.MockServer
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.mock-server:mockserver-netty:5.3.0'
+        classpath 'io.qameta.allure:allure-gradle:2.5'
+    }
+}
+
+apply plugin: 'io.qameta.allure'
+
+dependencies {
+    compile 'org.mock-server:mockserver-client-java:5.3.0'
+
+    compile project(':ktest-core:ktest-runner')
+    compile project(':ktest-integration:ktest-allure')
+    compile project(':ktest-integration:ktest-db')
+    compile project(':ktest-integration:ktest-jackson')
+    compile project(':ktest-integration:ktest-json-matchers')
+    compile project(':ktest-integration:ktest-jsonpath')
+    compile project(':ktest-integration:ktest-rest')
+    compile project(':ktest-integration:ktest-resttest')
+
+    testCompile 'com.natpryce:hamkrest'
+}
+
+allure {
+    autoconfigure = true
+    version = '2.4.1'
+    useJUnit4 {
+        version = '2.0-SNAPSHOT'
+    }
+}
+
+def server
+
+task startMockServer {
+    onlyIf { test.enabled }
+
+    doLast {
+        server = new MockServer(10010)
+    }
+}
+
+gradle.buildFinished {
+    if (!test.enabled || server == null) {
+        return
+    }
+
+    server.stop()
+}
+
+build.dependsOn startMockServer
+test.mustRunAfter startMockServer
+
+task runMockServer {
+    doLast {
+        server = new MockServer(10010)
+        logger.lifecycle("Running mock server on port 10010")
+        while (server.running) {
+            Thread.sleep(100)
+        }
+    }
+}
