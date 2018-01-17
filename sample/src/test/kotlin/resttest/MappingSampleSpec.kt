@@ -1,16 +1,21 @@
 package resttest
 
+import category.Positive
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import mockServer
+import org.junit.runner.RunWith
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
 import pojo.Person
+import run.smt.ktest.allure.*
 import run.smt.ktest.resttest.expect
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 import run.smt.ktest.util.resource.loadAsString
 
-class MappingSampleSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object MappingSampleSpec : WordSpec({
     beforeAll {
         mockServer.`when`(
             HttpRequest.request("/person/5").withMethod("GET")
@@ -24,6 +29,8 @@ class MappingSampleSpec : WordSpec({
             feature("RestTest usage")
             story("simple usage")
             title("Mapping: ${it.method}")
+
+            category<Positive>()
         }) {
             debug = true
 

@@ -7,6 +7,6 @@ dependencies {
 
     compile 'com.jayway.jsonpath:json-path'
 
-    testCompile project(':ktest-core:ktest-runner')
+    testCompile project(':ktest-core:ktest-runner:ktest-runner-junit4')
     testCompile 'com.natpryce:hamkrest'
 }

@@ -1,16 +1,20 @@
 package resttest
 
+import category.Negative
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmptyString
 import mockServer
+import org.junit.runner.RunWith
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
+import run.smt.ktest.allure.*
 import run.smt.ktest.resttest.expect
-import run.smt.ktest.specs.AllureSpec
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.FreeSpec
 
-class ErrorHttpCodesSpec : FreeSpec({
+@RunWith(KTestJUnitRunner::class)
+object ErrorHttpCodesSpec : FreeSpec({
     beforeAll {
         mockServer.`when`(
             HttpRequest.request("/errorHttpCodes").withMethod("PUT")
@@ -27,6 +31,8 @@ class ErrorHttpCodesSpec : FreeSpec({
                 feature("RestTest usage")
                 story("simple usage")
                 title("HTTP error codes: ${it.method}")
+
+                category<Negative>()
             }) {
                 url { backend / errorHttpCodes }
 

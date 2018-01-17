@@ -1,0 +1,10 @@
+description = 'kTest :: API'
+
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-core:ktest-config')
+
+    compile 'org.slf4j:slf4j-api'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
+    compile 'org.jetbrains.kotlin:kotlin-reflect'
+}

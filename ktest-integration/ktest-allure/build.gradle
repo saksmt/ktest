@@ -1,9 +1,8 @@
 dependencies {
     compile project(':ktest-core:ktest-util')
     compile project(':ktest-core:ktest-config')
-    compile project(':ktest-core:ktest-runner')
+    compile project(':ktest-core:ktest-api')
     compile project(':ktest-integration:ktest-jackson')
 
     compile 'io.qameta.allure:allure-java-commons'
-    compile 'io.qameta.allure:allure-junit4'
 }

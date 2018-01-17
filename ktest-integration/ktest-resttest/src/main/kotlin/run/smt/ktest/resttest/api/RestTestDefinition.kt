@@ -1,7 +1,7 @@
 package run.smt.ktest.resttest.api
 
 import com.fasterxml.jackson.databind.JavaType
-import run.smt.ktest.allure.AllureMetaInfoBuilder
+import run.smt.ktest.api.MetaInfoBuilder
 import run.smt.ktest.json.TypeDSL
 import run.smt.ktest.json.type
 import run.smt.ktest.rest.api.RequestElement
@@ -11,7 +11,7 @@ import run.smt.ktest.rest.url.UrlDsl
 import run.smt.ktest.rest.url.UrlProvider
 import kotlin.reflect.KClass
 
-typealias RestMetaInfoBuilder = AllureMetaInfoBuilder.(RequestData) -> Unit
+typealias RestMetaInfoBuilder = MetaInfoBuilder.(RequestData) -> Unit
 typealias RestTestDSL<U> = RestTestDefinition<U>.() -> Unit
 typealias Expectation<T> = (T) -> Unit
 typealias StatusCodeAwareExpectation<T> = (Int, T) -> Unit

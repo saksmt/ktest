@@ -2,6 +2,7 @@ dependencies {
     compile project(':ktest-core:ktest-util')
     compile project(':ktest-core:ktest-config')
 
+    compile 'org.slf4j:slf4j-api'
     compile 'com.zaxxer:HikariCP'
     compile 'org.springframework:spring-jdbc'
 }

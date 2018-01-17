@@ -1,18 +1,21 @@
 package resttest
 
+import category.Positive
 import com.fasterxml.jackson.databind.JsonNode
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import mockServer
+import org.junit.runner.RunWith
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
 import run.smt.ktest.json.deserialize
 import run.smt.ktest.json.matcher.hamkrest.JsonNodeMatchers
 import run.smt.ktest.json.serialize
 import run.smt.ktest.resttest.expect
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.AllureSpec
 
-class SimpleSpec : AllureSpec({
+@RunWith(KTestJUnitRunner::class)
+object SimpleSpec : AllureSpec({
     beforeAll {
         mockServer.`when`(
             HttpRequest.request("/simple").withMethod("GET").withQueryStringParameter("a", "a")
@@ -25,7 +28,11 @@ class SimpleSpec : AllureSpec({
 
     feature("RestTest usage") {
         story("simple usage") {
-            restTest(name = { "Simple request (with query params and body and matching): ${it.method}" }) {
+            restTest(name = {
+                "Simple request (with query params and body and matching): ${it.method}"
+            }, metaInfo = {
+                category<Positive>()
+            }) {
                 url { backend / simple }
 
                 GET(queryParam("a" to "a"))

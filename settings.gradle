@@ -1,6 +1,7 @@
 include ':ktest-core:ktest-util'
+include ':ktest-core:ktest-api'
+include ':ktest-core:ktest-runner:ktest-runner-junit4'
 include ':ktest-core:ktest-config'
-include ':ktest-core:ktest-runner'
 
 include ':ktest-integration:ktest-jackson'
 include ':ktest-integration:ktest-jsonpath'

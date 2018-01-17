@@ -31,11 +31,15 @@ dependencyManagement {
         // Allure
 
         dependency "io.qameta.allure:allure-java-commons:${versions['allure.java']}"
-        dependency "io.qameta.allure:allure-junit4:${versions['allure.java']}"
 
         // RestAssured
 
         dependency "io.rest-assured:rest-assured:${versions['rest-assured']}"
         dependency "io.rest-assured:json-path:${versions['rest-assured']}"
+
+        // SLF4J
+
+        dependency "org.slf4j:slf4j-api:${versions['slf4j']}"
+        dependency "org.slf4j:slf4j-simple:${versions['slf4j']}"
     }
 }

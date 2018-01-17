@@ -1,47 +1,41 @@
 package run.smt.ktest.specs
 
-import org.junit.runner.RunWith
-import run.smt.ktest.BaseSpec
-import run.smt.ktest.allure.AllureMetaInfoDSL
-import run.smt.ktest.internal.KTestJUnitRunner
-import run.smt.ktest.allure.metaInfo as _metaInfo
-import run.smt.ktest.internal.api.SpecBuilder
+import run.smt.ktest.allure.*
+import run.smt.ktest.api.BaseSpec
+import run.smt.ktest.api.MetaInfoDSL
+import run.smt.ktest.api.internal.SpecBuilder
+import run.smt.ktest.api.plus
 
-@RunWith(KTestJUnitRunner::class)
 abstract class AllureSpec(init: AllureSpec.() -> Unit) : BaseSpec() {
     init {
         this.init()
     }
 
-    companion object {
-        fun metaInfo(dsl: AllureMetaInfoDSL) = _metaInfo(dsl)
-    }
-
-    fun <T> epic(name: String, vararg annotations: Annotation = emptyArray(), body: () -> T) = epic(name, annotations.toList(), body)
-    fun <T> epic(name: String, annotations: List<Annotation> = emptyList(), body: () -> T) = SpecBuilder.suite(
+    fun <T> epic(name: String, body: () -> T) = epic(name, {}, body)
+    fun <T> epic(name: String, metaInfo: MetaInfoDSL, body: () -> T) = SpecBuilder.suite(
         "Epic: $name",
-        metaInfo { epic(name) } + annotations,
+        metaInfo + { epic(name) },
         body
     )
 
-    fun <T> feature(name: String, vararg annotations: Annotation = emptyArray(), body: () -> T) = feature(name, annotations.toList(), body)
-    fun <T> feature(name: String, annotations: List<Annotation> = emptyList(), body: () -> T) = SpecBuilder.suite(
+    fun <T> feature(name: String, body: () -> T) = feature(name, {}, body)
+    fun <T> feature(name: String, metaInfo: MetaInfoDSL, body: () -> T) = SpecBuilder.suite(
         "Feature: $name",
-        metaInfo { feature(name) } + annotations,
+        metaInfo + { feature(name) },
         body
     )
 
-    fun <T> story(name: String, vararg annotations: Annotation = emptyArray(), body: () -> T) = story(name, annotations.toList(), body)
-    fun <T> story(name: String, annotations: List<Annotation> = emptyList(), body: () -> T) = SpecBuilder.suite(
+    fun <T> story(name: String, body: () -> T) = story(name, {}, body)
+    fun <T> story(name: String, metaInfo: MetaInfoDSL, body: () -> T) = SpecBuilder.suite(
         "Story: $name",
-        metaInfo { story(name) } + annotations,
+        metaInfo + { story(name) },
         body
     )
 
-    fun case(name: String, vararg annotations: Annotation = emptyArray(), body: () -> Unit) = case(name, annotations.toList(), body)
-    fun case(name: String, annotations: List<Annotation> = emptyList(), body: () -> Unit) = SpecBuilder.case(
+    fun case(name: String, body: () -> Unit) = case(name, {}, body)
+    fun case(name: String, metaInfo: MetaInfoDSL, body: () -> Unit) = SpecBuilder.case(
         "Test Case: $name",
-        metaInfo { title(name) } + annotations,
+        metaInfo + { title(name) },
         body
     )
 }

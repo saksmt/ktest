@@ -1,7 +1,7 @@
 package run.smt.ktest.resttest.skeleton
 
-import run.smt.ktest.BaseSpec
-import run.smt.ktest.internal.api.SpecBuilder
+import run.smt.ktest.api.BaseSpec
+import run.smt.ktest.api.internal.SpecBuilder
 import run.smt.ktest.resttest.api.RestTestSpecSkeleton
 import run.smt.ktest.resttest.api.TestSpecProvider
 

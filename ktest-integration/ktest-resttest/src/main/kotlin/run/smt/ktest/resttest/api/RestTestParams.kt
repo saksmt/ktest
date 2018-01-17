@@ -1,7 +1,7 @@
 package run.smt.ktest.resttest.api
 
 import com.typesafe.config.Config
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.rest.api.RestContext
 import run.smt.ktest.rest.rest
 import run.smt.ktest.rest.url.UrlDsl

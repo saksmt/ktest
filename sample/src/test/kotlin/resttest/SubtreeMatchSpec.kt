@@ -1,17 +1,22 @@
 package resttest
 
+import category.Positive
 import com.fasterxml.jackson.databind.JsonNode
 import com.natpryce.hamkrest.assertion.assertThat
 import mockServer
+import org.junit.runner.RunWith
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
+import run.smt.ktest.allure.*
 import run.smt.ktest.json.loadAsJsonTree
 import run.smt.ktest.json.matcher.hamkrest.JsonNodeMatchers
 import run.smt.ktest.resttest.expect
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.BehaviorSpec
 import run.smt.ktest.util.resource.loadAsString
 
-class SubtreeMatchSpec : BehaviorSpec({
+@RunWith(KTestJUnitRunner::class)
+object SubtreeMatchSpec : BehaviorSpec({
     beforeAll {
         mockServer.`when`(
             HttpRequest.request("/complexJson").withMethod("PATCH")
@@ -26,6 +31,8 @@ class SubtreeMatchSpec : BehaviorSpec({
                 feature("RestTest usage")
                 story("simple usage")
                 title("Matching by subtree: ${it.method}")
+
+                category<Positive>()
             }) {
                 url { backend / complexJson }
 

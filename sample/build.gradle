@@ -19,7 +19,7 @@ apply plugin: 'io.qameta.allure'
 dependencies {
     compile 'org.mock-server:mockserver-client-java:5.3.0'
 
-    compile project(':ktest-core:ktest-runner')
+    compile project(':ktest-core:ktest-runner:ktest-runner-junit4')
     compile project(':ktest-integration:ktest-allure')
     compile project(':ktest-integration:ktest-db')
     compile project(':ktest-integration:ktest-jackson')
@@ -32,11 +32,9 @@ dependencies {
 }
 
 allure {
-    autoconfigure = true
+    // we don't need allure-junit listener, so disabling auto-configuration
+    autoconfigure = false
     version = '2.4.1'
-    useJUnit4 {
-        version = '2.0-SNAPSHOT'
-    }
 }
 
 def server
