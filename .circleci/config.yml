@@ -53,7 +53,7 @@ jobs:
           keys:
           - dependencies-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
           - dependencies-
-      - run: ./gradlew build release-snapshot -Psigning.secretKeyRingFile=~/repo/secring_dir/secring.gpg -Psigning.keyId=$SEC_RING_KEY_ID -Psigning.password=$SEC_RING_PASSWORD -Possrh.username=$OSSRH_USERNAME -Possrh.token=$OSSRH_PASSWORD
+      - run: ./gradlew build release-snapshot -Psigning.secretKeyRingFile=$(realpath ~/repo/secring_dir/secring.gpg) -Psigning.keyId=$SEC_RING_KEY_ID -Psigning.password=$SEC_RING_PASSWORD -Possrh.username=$OSSRH_USERNAME -Possrh.token=$OSSRH_PASSWORD
 
 workflows:
   version: 2
