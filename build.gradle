@@ -14,7 +14,9 @@ buildscript {
     }
 }
 
-subprojects {
+def leafProjects = subprojects.findAll { it.projectDir.toPath().resolve("build.gradle").toFile().exists() }
+
+configure(leafProjects) {
     apply plugin: 'kotlin'
     apply plugin: 'maven'
     apply plugin: 'io.spring.dependency-management'
