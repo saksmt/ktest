@@ -1,6 +1,6 @@
 package run.smt.ktest.resttest.impl
 
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.rest.rest
 import run.smt.ktest.rest.url.UrlProvider
 import run.smt.ktest.resttest.api.*
@@ -26,7 +26,7 @@ class RootRestTestContext<U : UrlProvider> internal constructor(
                 "Did you forget to add default for BaseSpec?"
         )
         skel(spec) {
-            RestTestDefinitionImpl(rootParams).execute(name, metaInfo, it)
+            RestTestDefinitionImpl(rootParams).apply(dsl).execute(name, metaInfo, it)
         }
     }
 

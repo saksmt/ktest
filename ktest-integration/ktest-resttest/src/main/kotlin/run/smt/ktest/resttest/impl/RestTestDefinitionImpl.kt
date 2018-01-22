@@ -2,8 +2,7 @@ package run.smt.ktest.resttest.impl
 
 import com.fasterxml.jackson.databind.JavaType
 import io.restassured.response.Response
-import run.smt.ktest.allure.AllureMetaInfoDSL
-import run.smt.ktest.allure.metaInfo
+import run.smt.ktest.api.MetaInfoDSL
 import run.smt.ktest.rest.api.Deserialization
 import run.smt.ktest.rest.api.RequestBuilder
 import run.smt.ktest.rest.api.RequestElement
@@ -49,13 +48,13 @@ internal open class RestTestDefinitionImpl<U : UrlProvider>(protected val restPa
         expectations.add(right<KClass<*>, JavaType>(type) to @Suppress("UNCHECKED_CAST") (expectation as UntypedExpectation))
     }
 
-    private operator fun RestMetaInfoBuilder.invoke(data: RequestData): AllureMetaInfoDSL = { (metaInfo ?: this@invoke)(data) }
+    private operator fun RestMetaInfoBuilder.invoke(data: RequestData): MetaInfoDSL = { (metaInfo ?: this@invoke)(data) }
 
-    internal fun execute(nameGen: (RequestData) -> String, metaInfo: RestMetaInfoBuilder, withSkel: (List<Annotation>, String, () -> Unit) -> Unit) {
+    internal fun execute(nameGen: (RequestData) -> String, metaInfo: RestMetaInfoBuilder, withSkel: (MetaInfoDSL, String, () -> Unit) -> Unit) {
         val actualRestContext = context ?: restParams.restDsl
         requests.forEach { (requestData, buildRequest) ->
             withSkel(
-                metaInfo(metaInfo(requestData)),
+                metaInfo(requestData),
                 nameGen(requestData)
             ) {
                 val response = actualRestContext {

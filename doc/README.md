@@ -11,9 +11,12 @@ be no versions for dependencies in this documentation
 ## Modules
 
 1. [Core](core/README.md) - core module
-    1. [Runner](core/runner.md) - core module containing spec-styles and jUnit runner
-    2. [Utilities](core/util.md) - some utilities that can't be in other modules (IO, reflection, ...)
-    3. [Config](core/config.md) - easy to use configuration for your tests in HOCON
+    1. [API](core/api.md) - kTest itself - definitions of spec styles
+    2. [Runner](core/runner/README.md) - Test framework specific runners, allowing to execute kTest specifications under
+        one or another test framework
+        1. [JUnit4 Runner](core/runner/junit4-runner.md) - Runner for JUnit 4
+    3. [Utilities](core/util.md) - some utilities that can't be in other modules (IO, reflection, ...)
+    4. [Config](core/config.md) - easy to use configuration for your tests in HOCON
 2. [Integration](integration/README.md) - integration layer module for external libraries/tools
     1. [Allure](integration/allure.md) - integration with Allure reporting framework
     2. [Jackson](integration/jackson.md) - integration with Jackson JSON library

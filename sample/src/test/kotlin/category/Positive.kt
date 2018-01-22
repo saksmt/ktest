@@ -1,0 +1,3 @@
+package category
+
+interface Positive

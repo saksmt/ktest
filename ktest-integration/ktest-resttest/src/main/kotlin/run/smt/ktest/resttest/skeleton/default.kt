@@ -1,6 +1,6 @@
 package run.smt.ktest.resttest.skeleton
 
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.resttest.api.RestTestSpecSkeleton
 import run.smt.ktest.specs.*
 import kotlin.reflect.KClass

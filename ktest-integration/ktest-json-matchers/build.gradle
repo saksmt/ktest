@@ -6,6 +6,6 @@ dependencies {
 
     compileOnly 'com.natpryce:hamkrest'
 
-    testCompile project(':ktest-core:ktest-runner')
+    testCompile project(':ktest-core:ktest-runner:ktest-runner-junit4')
     testCompile 'com.natpryce:hamkrest'
 }

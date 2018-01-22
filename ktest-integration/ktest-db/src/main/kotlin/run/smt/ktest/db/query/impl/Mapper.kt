@@ -1,5 +1,6 @@
 package run.smt.ktest.db.query.impl
 
+import org.slf4j.LoggerFactory
 import run.smt.ktest.db.mapping.Column
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -11,6 +12,10 @@ import kotlin.reflect.full.memberProperties
  */
 @Suppress("UNCHECKED_CAST")
 internal class Mapper<out T : Any>(private val mapTo: KClass<T>) {
+    companion object {
+        private val log = LoggerFactory.getLogger(Mapper::class.java)
+    }
+
     fun map(rs: SqlOutputAdapter?)
         = rs?.let { tryToFillUpByConstructor(it) ?: tryToFillUpThroughProperties(it) }
 
@@ -29,7 +34,7 @@ internal class Mapper<out T : Any>(private val mapTo: KClass<T>) {
             val preparedArguments = prepareArguments(arguments, matchingConstructor.parameterTypes!!)
             result = matchingConstructor.newInstance(*preparedArguments.toTypedArray())
         } catch (e: Exception) {
-            e.printStackTrace()
+            log.info("Failed to populate db result through constructor", e)
             return null
         }
         return result as? T

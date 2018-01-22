@@ -2,6 +2,7 @@ apply plugin: 'run.smt.dependency-properties'
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
 
         maven { url 'https://plugins.gradle.org/m2/' }
@@ -20,6 +21,7 @@ subprojects {
     apply from: "${rootDir}/dependencies.gradle"
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 

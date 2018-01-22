@@ -31,11 +31,11 @@ class SomeSpec : BehaviorSpec({
     given("a service", metaInfo {
         epic("my service")
     }) {
-        `when`("something happens", metaInfo {
+        `when`("something happens", metaInfo = {
             feature("my feature")
             story("my story")
         }) {
-            then("do something", metaInfo {
+            then("do something", metaInfo = {
                 muted()
                 severity(critical)
                 title("my test case")

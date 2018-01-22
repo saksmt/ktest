@@ -21,6 +21,6 @@ class RestContextRegistry(private val config: Config) : RestContext {
             val defaultConfig: Config = config["__DEFAULTS__.rest"]
             return RestContextImpl(instanceConfig fallbackTo defaultConfig)
         }
-        throw IllegalArgumentException()
+        throw IllegalArgumentException("No configuration provided for rest context named \"$configName\"")
     }
 }

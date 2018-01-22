@@ -1,8 +1,9 @@
 package run.smt.ktest.resttest.api
 
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
+import run.smt.ktest.api.MetaInfoDSL
 
-typealias TestSpec = (annotations: List<Annotation>, name: String, body: () -> Unit) -> Unit
+typealias TestSpec = (metaInfoBuilder: MetaInfoDSL, name: String, body: () -> Unit) -> Unit
 typealias TestSpecProvider = (TestSpec) -> Unit
 
 interface RestTestSpecSkeleton<in S : BaseSpec> {
