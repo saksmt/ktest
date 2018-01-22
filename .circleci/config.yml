@@ -46,12 +46,12 @@ jobs:
 
     steps:
       - checkout
-      - run: mkdir -p secring_dir && eval "echo ${SEC_RING}" | base64 -d > secring_dir/secring.gpg
+      - run: mkdir -p secring_dir && echo $SEC_RING | base64 -d > secring_dir/secring.gpg
       - restore_cache:
           keys:
           - dependencies-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
           - dependencies-
-      - run: ./gradlew build release-snapshot -Psigning.secretKeyRingFile=secring_dir/secring.gpg -Psigning.keyId=$(eval "echo ${SEC_RING_KEY_ID}") -Psigning.password=$(eval "echo ${SEC_RING_PASSWORD}") -Possrh.username=$(eval "echo ${OSSRH_USERNAME}") -Possrh.token=$(eval "echo ${OSSRH_PASSWORD}")
+      - run: ./gradlew build release-snapshot -Psigning.secretKeyRingFile=secring_dir/secring.gpg -Psigning.keyId=$SEC_RING_KEY_ID -Psigning.password=$SEC_RING_PASSWORD -Possrh.username=$OSSRH_USERNAME -Possrh.token=$OSSRH_PASSWORD
 
 workflows:
   version: 2
