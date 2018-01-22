@@ -11,18 +11,19 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
-          - v1-dependencies-
+          - dependencies-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
+          - dependencies-
 
-      - run: ./gradlew dependencies
+      - run: ./gradlew build
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
+          key: dependencies-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
 
-      # run tests!
-      - run: ./gradlew test
+      - run:
+          name: Generate allure report
+          command: ./gradlew :sample:allureReport
 
       - run:
           name: Save test results
@@ -30,9 +31,33 @@ jobs:
             mkdir -p ~/junit/
             find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
           when: always
+
       - store_test_results:
           path: ~/junit
+
+      # Allure report
       - store_artifacts:
-          path: ~/junit
-      - store_artifacts:
+          name: Store Allure report
           path: sample/build/reports/allure-report
+
+  publish_snapshot:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    steps:
+      - checkout
+      - run: mkdir -p secring_dir && echo $SEC_RING | base64 -d > secring_dir/secring.gpg
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "dependencies.gradle" }}-{{ checksum "dependencies.properties" }}
+          - dependencies-
+      - run: ./gradlew build release-snapshot -Psigning.secretKeyRingFile=secring_dir/secring.gpg -Psigning.keyId=$SEC_RING_KEY_ID -Psigning.password=$SEC_RING_PASSWORD -Possrh.username=$OSSRH_USERNAME -Possrh.token=$OSSRH_PASSWORD
+
+workflows:
+  version: 2
+  build_and_puslish_snapshot:
+    jobs:
+      - build
+      - publish_snapshot:
+          requires: [ build ]
+          filters: { branches: { only: develop } }

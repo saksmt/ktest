@@ -20,6 +20,10 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply from: "${rootDir}/dependencies.gradle"
 
+    if (gradle.startParameter.taskNames.any { it.startsWith('release') }) {
+        apply from: "${rootDir}/gradle/ossrh.gradle"
+    }
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -49,4 +53,7 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
+
+    task release() { /* marker */ }
+    task 'release-snapshot'() { /* marker */ }
 }
