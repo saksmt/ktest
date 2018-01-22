@@ -56,6 +56,12 @@ configure(leafProjects) {
         archives javadocJar, sourcesJar
     }
 
-    task release() { /* marker */ }
-    task 'release-snapshot'() { /* marker */ }
+    task release() {
+        dependsOn build
+        dependsOn uploadArchives
+    }
+    task 'release-snapshot'() {
+        dependsOn build
+        dependsOn uploadArchives
+    }
 }
