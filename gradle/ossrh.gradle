@@ -1,0 +1,55 @@
+apply plugin: 'signing'
+
+signing {
+    sign configurations.archives
+}
+
+ext['url'] = 'https://github.com/saksmt/ktest'
+
+project.version = (gradle.startParameter.taskNames.contains('release') ? project.version : "${project.version}-SNAPSHOT").toString()
+
+def snapshotRepo = 'https://oss.sonatype.org/content/repositories/snapshots'
+def releaseRepo = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment ->
+                signing.signPom(deployment)
+            }
+
+            repository(url: project.version.toString().endsWith('-SNAPSHOT') ? snapshotRepo : releaseRepo) {
+                authentication(userName: project.properties['ossrh.username'], password: project.properties['ossrh.token'])
+            }
+
+            pom.project {
+                name project.name
+                description project.description
+                packaging 'jar'
+                url project.url
+
+                scm {
+                    connection "scm:git:${project.url}"
+                    developerConnection 'scm:git:git@github.com:saksmt/ktest'
+                    url project.url
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License (MIT)'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'saksmt'
+                        name = 'Kirill Saksin'
+                        email = 'smt@smt.run'
+                    }
+                }
+            }
+        }
+    }
+}

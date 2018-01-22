@@ -12,3 +12,5 @@ include ':ktest-integration:ktest-rest'
 include ':ktest-integration:ktest-resttest'
 
 include ':sample'
+
+rootProject.name = 'ktest'
