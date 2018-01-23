@@ -104,6 +104,11 @@ def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? upload
                         delegate.groupId 'org.apache.maven.plugins'
                         delegate.artifactId 'maven-surefire-plugin'
                     }
+
+                    delegate.plugin {
+                        delegate.groupId 'io.qameta.allure'
+                        delegate.artifactId 'allure-maven'
+                    }
                 }
 
                 delegate.pluginManagement {
