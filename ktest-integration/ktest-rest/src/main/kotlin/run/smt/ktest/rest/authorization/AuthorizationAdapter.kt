@@ -11,8 +11,6 @@ interface AuthorizationAdapter {
      */
     fun setup(config: Config)
     fun RequestBuilder.enrichRequest(request: Sequence<RequestElement>) : Sequence<RequestElement>
-
-    companion object {
-        protected fun getLogger(config: Config) = _getLogger(config)
-    }
 }
+
+fun AuthorizationAdapter.getRestLogger(config: Config) = _getLogger(config)
