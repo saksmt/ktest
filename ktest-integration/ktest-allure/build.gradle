@@ -1,3 +1,5 @@
+description = 'kTest :: Integration :: Allure'
+
 dependencies {
     compile project(':ktest-core:ktest-util')
     compile project(':ktest-core:ktest-config')

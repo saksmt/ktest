@@ -1,3 +1,5 @@
+description = 'kTest :: Integration :: JSONPath'
+
 dependencies {
     compile project(':ktest-core:ktest-util')
     compile project(':ktest-integration:ktest-jackson')

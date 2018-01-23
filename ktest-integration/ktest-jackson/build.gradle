@@ -1,3 +1,5 @@
+description = 'kTest :: Integration :: Jackson'
+
 dependencies {
     compile project(':ktest-core:ktest-util')
 

@@ -6,7 +6,7 @@ kTest is integration/acceptance test oriented modular test framework in Kotlin
 
 For all dependencies either maven or gradle assuming you have some sort of dependency management 
 (`dependencyManagement` section in maven or spring dependency management plugin for gradle), so there will 
-be no versions for dependencies in this documentation
+be no versions for dependencies in this documentation. For easier setup of dependency management see [Parent POM](pom.md)
 
 ## Modules
 
@@ -27,3 +27,4 @@ be no versions for dependencies in this documentation
         2. [RestTest](integration/rest-test.md) - DSL for quick implementation of simple REST tests
     6. [Spring JDBC](integration/spring-jdbc.md) - integration with Spring JDBC
     7. **Not Implemented Yet** RabbitMQ - integration with RabbitMQ
+3. [Parent POM/BOM](pom.md) - Parent POM/BOM (useful for quick start)

@@ -11,6 +11,8 @@ include ':ktest-integration:ktest-allure'
 include ':ktest-integration:ktest-rest'
 include ':ktest-integration:ktest-resttest'
 
+include ':ktest-pom'
+
 include ':sample'
 
 rootProject.name = 'ktest'
