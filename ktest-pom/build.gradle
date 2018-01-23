@@ -1,0 +1,167 @@
+apply plugin: 'maven'
+apply plugin: 'io.spring.dependency-management'
+apply from: "${rootDir}/dependencies.gradle"
+apply from: "${rootDir}/gradle/ossrh.gradle"
+apply plugin: 'java' // need this for `install` task to be present
+
+description = 'kTest :: Parent POM'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencyManagement {
+    generatedPomCustomization {
+        enabled = true
+    }
+}
+
+def List<Project> allProjects(Project currentRoot = rootProject) {
+    def children = currentRoot.childProjects.values().collect { allProjects(it) }.flatten() as List<Project>
+    children.add(currentRoot)
+    return children
+}
+
+task emptyJar(type: Jar) {
+    classifier = null
+}
+
+task emptySourcesJar(type: Jar) {
+    classifier = 'sources'
+}
+
+task emptyJavaDocJar(type: Jar) {
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives emptyJar, emptySourcesJar, emptyJavaDocJar
+}
+
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? uploadArchives.repositories.mavenDeployer : null
+
+[installer, deployer].findAll { it != null }*.pom*.whenConfigured { pom ->
+    pom.project {
+        name project.description
+        packaging 'pom'
+
+        url project.url
+
+        scm {
+            connection "scm:git:${project.url}"
+            developerConnection 'scm:git:git@github.com:saksmt/ktest'
+            url project.url
+        }
+
+        licenses {
+            license {
+                name 'The MIT License (MIT)'
+                url 'http://opensource.org/licenses/MIT'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'saksmt'
+                name = 'Kirill Saksin'
+                email = 'smt@smt.run'
+            }
+        }
+    }
+
+    pom.withXml {
+        def props = asNode().appendNode('properties')
+
+        versions.each { name, version -> props.appendNode("${name}.version", version) }
+        props.appendNode('ktest.version', project.version)
+
+        def deps = asNode().dependencyManagement.dependencies.last()
+
+        allProjects()
+            .findAll { it.projectDir.toPath().resolve("build.gradle").toFile().exists() }
+            .each { proj ->
+                def dep = deps.appendNode('dependency')
+                dep.appendNode('artifactId', proj.name)
+                dep.appendNode('groupId', project.group)
+                dep.appendNode('version', project.version)
+            }
+
+        asNode().children().last() + {
+            delegate.build {
+                delegate.sourceDirectory 'src/main/kotlin'
+                delegate.testSourceDirectory 'src/test/kotlin'
+
+                delegate.plugins {
+                    delegate.plugin {
+                        delegate.groupId 'org.jetbrains.kotlin'
+                        delegate.artifactId 'kotlin-maven-plugin'
+                    }
+
+                    delegate.plugin {
+                        delegate.groupId 'org.apache.maven.plugins'
+                        delegate.artifactId 'maven-surefire-plugin'
+                    }
+                }
+
+                delegate.pluginManagement {
+                    delegate.plugins {
+                        delegate.plugin {
+                            delegate.groupId 'org.jetbrains.kotlin'
+                            delegate.artifactId 'kotlin-maven-plugin'
+                            delegate.version kotlinVersion
+
+                            delegate.executions {
+                                delegate.execution {
+                                    delegate.id 'compile'
+                                    delegate.phase 'compile'
+                                    delegate.goals { delegate.goal 'compile' }
+                                }
+
+                                delegate.execution {
+                                    delegate.id 'test-compile'
+                                    delegate.phase 'test-compile'
+                                    delegate.goals { delegate.goal 'test-compile' }
+                                }
+                            }
+                        }
+
+                        delegate.plugin {
+                            delegate.groupId 'io.qameta.allure'
+                            delegate.artifactId 'allure-maven'
+                            delegate.version versions['allure.maven']
+                        }
+
+                        delegate.plugin {
+                            delegate.artifactId 'maven-compiler-plugin'
+                            delegate.version versions['maven-compiler-plugin']
+
+                            delegate.configuration {
+                                delegate.source versions['java']
+                                delegate.target versions['java']
+                                delegate.encoding 'UTF-8'
+                            }
+                        }
+
+                        delegate.plugin {
+                            delegate.groupId 'org.apache.maven.plugins'
+                            delegate.artifactId 'maven-surefire-plugin'
+                            delegate.version versions['maven-surefire-plugin']
+
+                            delegate.configuration {
+                                delegate.trimStackTrace false
+                                delegate.testFailureIgnore true
+                                delegate.includes {
+                                    delegate.include '**/*Test'
+                                    delegate.include '**/*Spec'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

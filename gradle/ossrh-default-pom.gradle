@@ -1,0 +1,32 @@
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? uploadArchives.repositories.mavenDeployer : null
+
+[installer, deployer].findAll { it != null }*.pom*.whenConfigured { pom ->
+    pom.project {
+        name project.description
+        packaging 'jar'
+        url project.url
+
+        scm {
+            connection "scm:git:${project.url}"
+            developerConnection 'scm:git:git@github.com:saksmt/ktest'
+            url project.url
+        }
+
+        licenses {
+            license {
+                name 'The MIT License (MIT)'
+                url 'http://opensource.org/licenses/MIT'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'saksmt'
+                name = 'Kirill Saksin'
+                email = 'smt@smt.run'
+            }
+        }
+    }
+}
