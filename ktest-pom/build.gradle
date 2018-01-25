@@ -137,6 +137,10 @@ def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? upload
                             delegate.groupId 'io.qameta.allure'
                             delegate.artifactId 'allure-maven'
                             delegate.version versions['allure.maven']
+                            delegate.configuration {
+                                delegate.reportVersion versions['allure.report']
+                                delegate.resultsDirectory '../allure-results'
+                            }
                         }
 
                         delegate.plugin {
