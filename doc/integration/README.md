@@ -1,4 +1,3 @@
-+
 # [kTest](../README.md) :: Integration
 
 External framework/library integration modules for kTest
