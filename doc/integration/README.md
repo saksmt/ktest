@@ -10,6 +10,6 @@ External framework/library integration modules for kTest
 3. [JSON matchers](json-matcher.md) - smart JSON matchers based on Jackson and JSONPath with integration for HamKrest
 4. [Spring JDBC](spring-jdbc.md) - integration with Spring JDBC
 5. [Allure](allure.md) - integration with Allure reporting framework
-6. RestAssured - integration with RestAssured
-    1. [Core](rest.md) - core RestAssured integration
-    2. [RestTest](rest-test.md) - DSL for quick implementation of simple REST tests
+6. [RestAssured](rest-assured/README.md) - integration with RestAssured
+    1. [Core](rest-assured/rest.md) - core RestAssured integration
+    2. [RestTest](rest-assured/rest-test.md) - DSL for quick implementation of simple REST tests

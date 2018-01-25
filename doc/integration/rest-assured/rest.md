@@ -1,4 +1,4 @@
-# [kTest](..) :: [Integration](README.md) :: RestAssured
+# [kTest](..) :: [Integration](../README.md) :: [RestAssured](README.md) :: Core Support
 
 ## Download
 
@@ -131,7 +131,7 @@ As for NOOP adapter your headers will have priority since NOOP adapter provides 
 ```kotlin
 import run.smt.ktest.rest.url.UrlProvider
 import run.smt.ktest.rest.url.createUrlDsl
-import run.smt.ktest.util.config.get
+import run.smt.ktest.config.get
 
 // First you need to create your very own URL DSL
 
