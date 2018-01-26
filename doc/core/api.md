@@ -148,6 +148,35 @@ object MySpec : BehaviorSpec({
 
 There is also similar way to define metadata for other specs, just look into signatures! :)
 
+## Table testing
+
+Imagine you have some scenario of test that should be used with different test data. There is a solution for such issues:
+
+```kotlin
+import run.smt.ktest.table.*
+import run.smt.ktest.specs.BehaviorSpec
+
+object MySumSpec : BehaviorSpec({
+    given("two numbers") {
+        // you can use up to 22 columns!
+        val myTestData = table(
+            headers("my test parameter 1", "my test parameter 2", "my expected result"),
+            row(1, 2, 3),
+            row(3, 2, 5),
+            row(-4, 2, -2)
+        )
+        `when`("called sum on them") {
+            // for negative tables there is also `forNone`
+            forAll(myTestData) { a, b, sum ->
+                then("sum should be correct [$a, $b]") {
+                    assert((a + b) == sum)
+                }
+            }
+        }
+    }
+})
+```
+
 ## Extending
 
 ### Writing you own spec style
