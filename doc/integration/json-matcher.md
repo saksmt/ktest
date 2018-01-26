@@ -106,6 +106,8 @@ fun usage(firstNode: JsonNode, secondNode: JsonNode, configuration: MatcherConfi
 
 Due to API of hamkrest about actual value there are 2 sets of matchers: for JSONPaths DocumentContext and Jacksons JsonNode.
 
+**Attention:** `matches` function below has absolutely nothing to do with `com.natpryce.hamkrest.matches` function!
+
 #### JsonNode
 
 ```kotlin
