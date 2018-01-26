@@ -3,8 +3,7 @@ package run.smt.ktest.json
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.*
 import run.smt.ktest.util.reflection.canBeAssignedTo
 import run.smt.ktest.util.resource.load
@@ -13,7 +12,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
-val mapper = ObjectMapper()
+val mapper = jacksonObjectMapper()
 
 inline fun <reified T : Any> String.loadAsJson(): T = load().deserialize()
 fun <T : Any> String.loadAsJson(type: JavaType): T = load() deserialize type

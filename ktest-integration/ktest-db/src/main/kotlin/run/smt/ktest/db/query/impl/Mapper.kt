@@ -43,7 +43,7 @@ internal class Mapper<out T : Any>(private val mapTo: KClass<T>) {
     /**
      * Map list of SQL values to list of requested Java values
      */
-    private fun prepareArguments(arguments: List<Any>, parameterTypes: Array<Class<*>>): List<Any> {
+    private fun prepareArguments(arguments: List<Any?>, parameterTypes: Array<Class<*>>): List<Any?> {
         return arguments.asSequence()
             .zip(parameterTypes.asSequence())
             .map { it.first coerceTo it.second }

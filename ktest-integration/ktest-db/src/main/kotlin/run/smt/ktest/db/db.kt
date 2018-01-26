@@ -57,4 +57,4 @@ private fun createDatasource(name: String): HikariDataSource {
 
 fun String.db(): DataSource = getDs(this)
 
-fun <T> String.db(executeOnDb: DataSource.() -> T) = db().executeOnDb()
+infix fun <T> String.db(executeOnDb: DataSource.() -> T) = db().executeOnDb()

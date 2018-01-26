@@ -21,12 +21,19 @@ dependencyManagement {
 
         dependency "com.fasterxml.jackson.core:jackson-core:${versions['jackson']}"
         dependency "com.fasterxml.jackson.core:jackson-databind:${versions['jackson']}"
+        dependency "com.fasterxml.jackson.module:jackson-module-kotlin:${versions['jackson']}"
         dependency "com.jayway.jsonpath:json-path:${versions['json-path']}"
 
         // DB related
 
         dependency "org.springframework:spring-jdbc:${versions['spring']}"
         dependency "com.zaxxer:HikariCP:${versions['HikariCP']}"
+
+        // DB drivers
+        dependency "com.h2database:h2:${versions['h2']}"
+        dependency "org.xerial:sqlite-jdbc:${versions['sqlite']}"
+        dependency "mysql:mysql-connector-java:${versions['mysql']}"
+        dependency "postgresql:postgresql:${versions['postgresql']}"
 
         // Allure
 

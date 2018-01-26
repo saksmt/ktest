@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS users(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    second_name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255),
+    age INTEGER(3)
+);
