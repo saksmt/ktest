@@ -28,6 +28,8 @@ dependencies {
     compile project(':ktest-integration:ktest-rest')
     compile project(':ktest-integration:ktest-resttest')
 
+    compile 'com.h2database:h2'
+
     testCompile 'com.natpryce:hamkrest'
 }
 

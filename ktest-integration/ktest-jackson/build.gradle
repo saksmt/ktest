@@ -5,6 +5,7 @@ dependencies {
 
     compile 'com.fasterxml.jackson.core:jackson-core'
     compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
     compileOnly 'com.jayway.jsonpath:json-path'
 }

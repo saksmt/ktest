@@ -50,7 +50,7 @@ db {
     pool-size = 5 # optional, default value = 5
   }
   
-  // there are also predefined JDBC driver configurations for postgresql and mysql
+  // there are also predefined JDBC driver configurations for postgresql, mysql, h2 and sqlite
 }
 
 // also you can define default-driver and then use you could create new connection without specifying 
