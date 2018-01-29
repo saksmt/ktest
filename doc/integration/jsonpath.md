@@ -53,7 +53,7 @@ fun usage() {
     // deserialization
     val myResult = simpleQuery castTo ResultPojo::class
     val myResult2: ResultPojo = simpleQuery.castTo()
-    val myResult3: List<Contained> = complexSqlStyle castTo type { list<Contained>() } 
+    val myResult3 = complexSqlStyle castTo type { list<Contained>() } 
 }
 ```
 

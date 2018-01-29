@@ -3,9 +3,12 @@ package run.smt.ktest.jsonpath
 import com.jayway.jsonpath.DocumentContext
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.junit.runner.RunWith
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 
-class JsonPathExtractionSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object JsonPathExtractionSpec : WordSpec({
     val jsonPath = "find.json".loadAsJsonPath()
 
     "DocumentContext[]" should {

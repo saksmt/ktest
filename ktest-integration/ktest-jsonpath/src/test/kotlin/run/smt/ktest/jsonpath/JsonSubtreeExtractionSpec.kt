@@ -5,13 +5,16 @@ import com.jayway.jsonpath.PathNotFoundException
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
+import org.junit.runner.RunWith
 import run.smt.ktest.jsonpath.criteria.filter
 import run.smt.ktest.jsonpath.subtree.createSubtree
 import run.smt.ktest.jsonpath.subtree.extractSubtree
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 import run.smt.ktest.util.text.stripMargin
 
-class JsonSubtreeExtractionSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object JsonSubtreeExtractionSpec : WordSpec({
     val subtreeWithMissing = createSubtree {
         + "config.apps.app0.app2" {
             + "core" {

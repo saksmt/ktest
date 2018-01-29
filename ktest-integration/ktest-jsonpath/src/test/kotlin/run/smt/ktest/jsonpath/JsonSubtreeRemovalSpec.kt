@@ -2,10 +2,13 @@ package run.smt.ktest.jsonpath
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.junit.runner.RunWith
 import run.smt.ktest.jsonpath.subtree.remove
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 
-class JsonSubtreeRemovalSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object JsonSubtreeRemovalSpec : WordSpec({
     "DocumentContext remove" should {
         "correctly drop specified nodes" {
             val jp = "for-subtree.json".loadAsJsonPath()

@@ -83,10 +83,10 @@ interface RestTestDefinition<out U : UrlProvider> : RequestElementBuilder {
         }
     }
 
-    fun <T : Any> expect(type: TypeDSL, expectation: Expectation<T>) = expect(type(type), expectation)
+    fun <T : Any> expect(type: TypeDSL<T>, expectation: Expectation<T>) = expect(type(type), expectation)
 
     fun <T : Any> expect(resultType: KClass<T>, expectation: StatusCodeAwareExpectation<T>)
     fun <T : Any> expect(type: JavaType, expectation: StatusCodeAwareExpectation<T>)
-    fun <T : Any> expect(type: TypeDSL, expectation: StatusCodeAwareExpectation<T>) = expect(type(type), expectation)
+    fun <T : Any> expect(type: TypeDSL<T>, expectation: StatusCodeAwareExpectation<T>) = expect(type(type), expectation)
 }
 

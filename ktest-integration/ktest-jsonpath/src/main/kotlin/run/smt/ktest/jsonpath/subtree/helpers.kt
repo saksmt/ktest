@@ -8,7 +8,7 @@ import run.smt.ktest.jsonpath.copy
 internal fun resolvePaths(spec: SubtreeSpec, resolvableContext: DocumentContext): Set<String> {
     return spec.asSequence()
         .map { it.applyOn(resolvableContext) }
-        .map { it.castTo<List<String>> { list<String>() } }
+        .map { it.castTo { list<String>() } }
         .flatMap { it.asSequence() }
         .toSet()
 }

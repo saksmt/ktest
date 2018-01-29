@@ -81,7 +81,7 @@ class SomeGenericPojo<T> { /* some body */ }
 fun usage(myData: String) {
     val deserialized1 = myData.deserialize<SomePojo>()
     val deserialized2 = myData deserialize SomePojo::class
-    val deserialized3: SomeGenericPojo<List<String>> = myData deserialize { generic(SomeGenericPojo::class, list<String>()) }
+    val deserialized3 = myData deserialize { generic<SomeGenericPojo<List<String>>>(SomeGenericPojo::class, list<String>()) }
     val deserializedAsJsonNode = myData deserialize JsonNode::class
     
     // if you added json-path as dependency to your project
@@ -102,7 +102,7 @@ class SomeGenericPojo<T> { /* some body */ }
 fun usage(myData: JsonNode) {
     val mapped1 = myData.mapTo<SomePojo>()
     val mapped2 = myData mapTo SomePojo::class
-    val mapped3: SomeGenericPojo<List<String>> = myData mapTo { generic(SomeGenericPojo::class, list<String>()) }
+    val mapped3 = myData mapTo { generic<SomeGenericPojo<List<String>>>(SomeGenericPojo::class, list<String>()) }
     val mappedToJsonNode = myData mapTo JsonNode::class
     
     // if you added json-path as dependency to your project

@@ -8,7 +8,7 @@ fun extractSubtree(dc: DocumentContext, ignoreMissing: Boolean = false, dsl: Sub
 
 fun extractSubtree(dc: DocumentContext, spec: SubtreeSpec, ignoreMissing: Boolean = false): DocumentContext {
     val resolvableDc = dc.asResolvableContext(ignoreMissing)
-    val allPaths = resolvableDc["$..*"].castTo<List<String>> { list<String>() }.asSequence()
+    val allPaths = resolvableDc["$..*"].castTo { list<String>() }.asSequence()
 
     val preservedPaths = resolvePaths(spec, resolvableDc)
 
