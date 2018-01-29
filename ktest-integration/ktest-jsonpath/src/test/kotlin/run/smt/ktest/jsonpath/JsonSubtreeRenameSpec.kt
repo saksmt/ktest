@@ -3,11 +3,14 @@ package run.smt.ktest.jsonpath
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
+import org.junit.runner.RunWith
 import run.smt.ktest.json.loadAsJson
 import run.smt.ktest.jsonpath.subtree.rename
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 
-class JsonSubtreeRenameSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object JsonSubtreeRenameSpec : WordSpec({
     "DocumentContext rename" should {
         "correctly rename fields" {
             val jp = "for-subtree.json".loadAsJsonPath()
@@ -23,7 +26,7 @@ class JsonSubtreeRenameSpec : WordSpec({
                         "core.datasources.app2.url" to "URL"
                     }
                 }
-            }.castTo { map<String, Any>() }, equalTo("for-subtree-afterRename.json".loadAsJson<Map<String, Any>> { map<String, Any>() }))
+            }.castTo { map<String, Any>() }, equalTo("for-subtree-afterRename.json".loadAsJson { map<String, Any>() }))
         }
 
         "do nothing if no fields for rename specified" {
@@ -32,7 +35,7 @@ class JsonSubtreeRenameSpec : WordSpec({
 
             assertThat(
                 jp.rename().castTo { map<String, Any>() },
-                equalTo(untouched.castTo<Map<String, Any>> { map<String, Any>() })
+                equalTo(untouched.castTo { map<String, Any>() })
             )
         }
 

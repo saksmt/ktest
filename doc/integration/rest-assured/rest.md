@@ -104,6 +104,7 @@ Types you can use for `as` in complex queries and as type arguments for return t
  - RestAssured's `Response`
  - Any POJO type supported by Jackson
  - If provided TypeDSL or Jackson's `JavaType` - almost any type at all
+ - As bonus for `JavaType` representing `Pair<Int, T>` you'll get a pair of statusCode and body
 
 ##### Note about overriding policy for headers
 

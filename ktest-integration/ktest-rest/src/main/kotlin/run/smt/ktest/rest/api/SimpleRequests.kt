@@ -92,24 +92,24 @@ interface SimpleRequests : Deserialization, ComplexQueriesBuilder {
 
     // kTest JSON TypeDSLs
 
-    fun <T : Any> String.GET(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.GET(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         GET(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.POST(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.POST(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         POST(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.PUT(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.PUT(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         PUT(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.HEAD(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.HEAD(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         HEAD(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.OPTIONS(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.OPTIONS(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         OPTIONS(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.PATCH(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.PATCH(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         PATCH(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 
-    fun <T : Any> String.DELETE(builder: TypeDSL, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
+    fun <T : Any> String.DELETE(vararg parameters: RequestElement, ignoreStatusCode: Boolean = false, builder: TypeDSL<T>): T =
         DELETE(clazz = type(builder), parameters = *parameters, ignoreStatusCode = ignoreStatusCode)
 }

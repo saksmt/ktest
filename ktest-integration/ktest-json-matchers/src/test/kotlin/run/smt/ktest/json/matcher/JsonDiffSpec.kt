@@ -3,14 +3,17 @@ package run.smt.ktest.json.matcher
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
+import org.junit.runner.RunWith
 import run.smt.ktest.json.createJsonNode
 import run.smt.ktest.json.loadAsJsonTree
 import run.smt.ktest.json.matcher.api.ComparisonMismatch
 import run.smt.ktest.json.matcher.api.ComparisonPath
 import run.smt.ktest.json.matcher.api.jsonComparator
+import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.WordSpec
 
-class JsonDiffSpec : WordSpec({
+@RunWith(KTestJUnitRunner::class)
+object JsonDiffSpec : WordSpec({
     "JsonComparator" should {
         "return no mismatches for equal JSONs" {
             val firstJson = "simple.json".loadAsJsonTree()

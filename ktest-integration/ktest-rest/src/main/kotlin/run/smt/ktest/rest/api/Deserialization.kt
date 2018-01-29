@@ -18,22 +18,31 @@ import kotlin.reflect.KClass
  */
 interface Deserialization {
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> ResponseBodyExtractionOptions.`as`(clazz: KClass<T>): T {
+    fun <T : Any> ResponseBodyExtractionOptions.`as`(type: JavaType): T {
+        val mainType = type.rawClass
         return when {
-            clazz.canBeAssignedTo<InputStream>() -> this.asInputStream() as T
-            clazz.canBeAssignedTo<String>() -> this.asString() as T
-            clazz.canBeAssignedTo<ByteArray>() -> this.asByteArray() as T
-            clazz.canBeAssignedTo<JsonPath>() -> this.jsonPath() as T
-            clazz.canBeAssignedTo<XmlPath>() -> this.xmlPath() as T
-            clazz.canBeAssignedTo<JsonNode>() -> this.asJsonTree() as T
-            clazz.canBeAssignedTo<Response>() -> this as T
-            clazz.canBeAssignedTo<DocumentContext>() -> (asInputStream() deserialize DocumentContext::class) as T
-            else -> this.`as`(clazz.java)
+            mainType.canBeAssignedTo<InputStream>() -> this.asInputStream() as T
+            mainType.canBeAssignedTo<String>() -> this.asString() as T
+            mainType.canBeAssignedTo<ByteArray>() -> this.asByteArray() as T
+            mainType.canBeAssignedTo<JsonPath>() -> this.jsonPath() as T
+            mainType.canBeAssignedTo<XmlPath>() -> this.xmlPath() as T
+            mainType.canBeAssignedTo<JsonNode>() -> this.asJsonTree() as T
+            mainType.canBeAssignedTo<Response>() -> this as T
+            mainType.canBeAssignedTo<DocumentContext>() -> (asInputStream() deserialize DocumentContext::class) as T
+            mainType.canBeAssignedTo<Pair<*, *>>() -> {
+                val (l, r) = type.bindings.typeParameters
+                if (l.rawClass.canBeAssignedTo<Int>()) {
+                    Pair<Int, Any?>((this as Response).statusCode, `as`(r)) as T
+                } else {
+                    this.`as`(type.rawClass) as T
+                }
+            }
+            else -> this.`as`(type.rawClass) as T
         }
     }
 
-    fun <T : Any> ResponseBodyExtractionOptions.`as`(type: JavaType): T = asInputStream() deserialize type
-    fun <T : Any> ResponseBodyExtractionOptions.`as`(type: TypeDSL): T = asInputStream() deserialize type
+    fun <T : Any> ResponseBodyExtractionOptions.`as`(clazz: KClass<T>): T = `as` { simple(clazz) }
+    fun <T : Any> ResponseBodyExtractionOptions.`as`(type: TypeDSL<T>): T = `as`(run.smt.ktest.json.type(type))
 
     fun ResponseBodyExtractionOptions.asJsonTree(): JsonNode = this.asInputStream().deserialize()
 }

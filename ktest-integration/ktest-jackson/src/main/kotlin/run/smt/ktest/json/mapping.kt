@@ -17,7 +17,7 @@ val mapper = jacksonObjectMapper()
 inline fun <reified T : Any> String.loadAsJson(): T = load().deserialize()
 fun <T : Any> String.loadAsJson(type: JavaType): T = load() deserialize type
 fun <T : Any> String.loadAsJson(type: TypeReference<T>) = load() deserialize type
-fun <T : Any> String.loadAsJson(type: TypeDSL) = load().deserialize<T>(type)
+fun <T : Any> String.loadAsJson(type: TypeDSL<T>) = load().deserialize(type)
 fun String.loadAsJsonTree() = load().deserialize<JsonNode>()
 
 fun Any?.serialize(): ByteArray = mapper.writeValueAsBytes(this)
@@ -31,9 +31,9 @@ infix fun <R : Any> String.deserialize(clazz: KClass<R>) = mapper.readTree(this)
 infix fun <R : Any> ByteArray.deserialize(clazz: KClass<R>) = mapper.readTree(this) mapTo clazz.java
 infix fun <R : Any> InputStream.deserialize(clazz: KClass<R>) = mapper.readTree(this) mapTo clazz.java
 
-infix fun <R : Any> String.deserialize(typeDSL: TypeDSL): R = this deserialize type(typeDSL)
-infix fun <R : Any> ByteArray.deserialize(typeDSL: TypeDSL): R = this deserialize type(typeDSL)
-infix fun <R : Any> InputStream.deserialize(typeDSL: TypeDSL): R = this deserialize type(typeDSL)
+infix fun <R : Any> String.deserialize(typeDSL: TypeDSL<R>): R = this deserialize type(typeDSL)
+infix fun <R : Any> ByteArray.deserialize(typeDSL: TypeDSL<R>): R = this deserialize type(typeDSL)
+infix fun <R : Any> InputStream.deserialize(typeDSL: TypeDSL<R>): R = this deserialize type(typeDSL)
 
 infix fun <R : Any> String.deserialize(clazz: Class<R>) = mapper.readTree(this) mapTo clazz
 infix fun <R : Any> ByteArray.deserialize(clazz: Class<R>) = mapper.readTree(this) mapTo clazz
@@ -50,7 +50,7 @@ infix fun <R : Any> InputStream.deserialize(type: TypeReference<R>) = mapper.rea
 infix fun <R: Any> JsonNode.mapTo(type: TypeReference<R>): R = mapTo(mapper.constructType(type.type))
 infix fun <R: Any> JsonNode.mapTo(resultClass: Class<R>): R = mapTo { simple(resultClass) }
 infix fun <R: Any> JsonNode.mapTo(resultClass: KClass<R>): R = mapTo { simple(resultClass) }
-infix fun <R: Any> JsonNode.mapTo(type: TypeDSL): R = mapTo(type(type))
+infix fun <R: Any> JsonNode.mapTo(type: TypeDSL<R>): R = mapTo(type(type))
 
 infix fun <R> JsonNode.mapTo(type: JavaType): R {
     @Suppress("UNCHECKED_CAST")
