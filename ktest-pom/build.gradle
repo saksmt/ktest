@@ -77,6 +77,10 @@ def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? upload
 
         versions.each { name, version -> props.appendNode("${name}.version", version) }
         props.appendNode('ktest.version', project.version)
+        props.appendNode('kotlin.version', project.version)
+        props.appendNode('kotlin.compiler.jvmTarget', '1.8')
+        props.appendNode('kotlin.compiler.incremental', 'true')
+        props.appendNode('java.min.version', '1.8')
 
         def deps = asNode().dependencyManagement.dependencies.last()
 
