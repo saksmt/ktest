@@ -65,7 +65,7 @@ Simple as follows:
 ```kotlin
 import run.smt.ktest.db.db
 
-fun usage() {
+fun usage1() {
     "databaseName".db {
         // here you're in context of database "databaseName" connection!
     }
@@ -82,7 +82,7 @@ fun usage() {
 import run.smt.ktest.db.db
 import run.smt.ktest.db.query.select
 
-fun usage() {
+fun usage2() {
     "app".db {
         // mapping result to POJO
         val singleResult = select<ClassWhichWouldBeUsedForMapping>("SELECT * FROM world WHERE :parameterName IS NOT NULL") {
@@ -138,7 +138,7 @@ import run.smt.ktest.db.query.insert
 import run.smt.ktest.db.query.update
 import run.smt.ktest.db.query.delete
 
-fun usage() {
+fun usage3() {
     "app".db {
         insert("INSERT ...") {
             // same syntax for parameters as in SELECT
@@ -174,7 +174,7 @@ data class MyPojo(
     var output: Long? = null
 )
 
-fun usage() {
+fun usage4() {
     "app".db {
         val result = call<MyPojo>("{call my_stored_procedure(:parameter1, :parameter2)}") {
             parameter("parameter1", "value") // if you omit parameter it will be set to null
@@ -259,7 +259,7 @@ class MyTestDataRegistry(private val loadJsonResource: (String) -> InputStream) 
 ```kotlin
 val testData: TestDataRegistry by lazy { MyTestDataRegistry({ resourceName -> "test-data/$resourceName.json".load() }) }
 
-fun usage() {
+fun usage5() {
     // Insert fresh entity1 into database (from "resources/test-data/some-entity1-json.json")
     testData.setup<Entity1>("some-entity1-json")
     

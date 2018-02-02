@@ -7,6 +7,7 @@ Inspired by [kotlintest](https://github.com/kotlintest/kotlintest), [specs2](htt
 
 ## Example (with usage of all available modules)
 
+[//]: # (no_check)
 ```kotlin
 object MySpec : AllureSpec({
     beforeAll {

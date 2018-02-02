@@ -67,7 +67,7 @@ You can also create configuration through DSL in kotlin:
 ```kotlin
 import run.smt.ktest.json.matcher.api.*
 
-fun usage() {
+fun usage1() {
     val myConfig = matcherConfig {
         compareArraysBasedOnPermutations()
         printAllMismatches()
@@ -87,7 +87,7 @@ Also note that for options unspecified in kotlin defaults will be taken from glo
 import run.smt.ktest.json.matcher.api.*
 import com.fasterxml.jackson.databing.JsonNode
 
-fun usage(firstNode: JsonNode, secondNode: JsonNode, configuration: MatcherConfig) {
+fun usage2(firstNode: JsonNode, secondNode: JsonNode, configuration: MatcherConfig) {
     val myComparator = jsonComparator {
         // here goes configuration from previous section
     }
@@ -117,7 +117,7 @@ import com.natpryce.hamkrest.should.shouldMatch
 import com.fasterxml.jackson.databind.JsonNode
 import com.jayway.jsonpath.DocumentContext
 
-fun usage(
+fun usage3(
     someNode: JsonNode,
     otherNode: JsonNode,
     dc: DocumentContext,
@@ -168,7 +168,7 @@ import com.natpryce.hamkrest.should.shouldMatch
 import com.fasterxml.jackson.databind.JsonNode
 import com.jayway.jsonpath.DocumentContext
 
-fun usage(
+fun usage4(
     someNode: JsonNode,
     otherNode: JsonNode,
     dc: DocumentContext,

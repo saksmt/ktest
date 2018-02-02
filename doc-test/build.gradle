@@ -1,0 +1,217 @@
+apply plugin: 'kotlin'
+apply plugin: 'maven'
+apply plugin: 'io.spring.dependency-management'
+apply from: "${rootDir}/dependencies.gradle"
+
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-core:ktest-api')
+    compile project(':ktest-core:ktest-config')
+    compile project(':ktest-core:ktest-runner:ktest-runner-junit4')
+
+    compile project(':ktest-integration:ktest-allure')
+    compile project(':ktest-integration:ktest-db')
+    compile project(':ktest-integration:ktest-jackson')
+    compile project(':ktest-integration:ktest-json-matchers')
+    compile project(':ktest-integration:ktest-jsonpath')
+    compile project(':ktest-integration:ktest-rest')
+    compile project(':ktest-integration:ktest-resttest')
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    docDir = rootDir.toPath().resolve('doc').toFile()
+}
+
+def generateTestBuildFor(File docFile) {
+    String fullDocName = getFullDocName(docFile)
+    def actualName = fullDocName.replaceAll('/', '__').replaceAll(/[^a-zA-Z0-9_]/, "")
+    def (File sourceDir, File helpersDir) = resolveSourceDirs(fullDocName)
+
+    parseSourcesFromMarkdown(docFile).eachWithIndex { data, int index ->
+        data.with {
+            def fileName = title.replaceAll('//', '--').replaceAll(/[^a-zA-Z_0-9]/, '')
+            def targetDir = sourceDir.toPath()
+            if (codePackage != '') {
+                targetDir = targetDir.resolve(codePackage.replaceAll('.', '/'))
+            }
+            targetDir.resolve("codeBlock___${fileName}___${index}.kt").toFile().withWriter('UTF-8') {
+                it.write(content)
+            }
+        }
+    }
+
+    sourceSets.create(actualName) {
+        kotlin {
+            srcDir sourceDir
+            srcDir helpersDir
+        }
+
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+
+    configurations.getByName("${actualName}Compile") {
+        extendsFrom configurations.compile
+    }
+
+    configurations.getByName("${actualName}Runtime") {
+        extendsFrom configurations.runtime
+    }
+
+    build.dependsOn tasks["${actualName}Classes"]
+}
+
+class Header {
+    private def first = null
+    private def second = null
+    private def third = null
+    private def fourth = null
+    private def fifth = null
+
+    def first(String name) {
+        first = name
+        second = null
+        third = null
+        fourth = null
+        fifth = null
+    }
+
+    def second(String name) {
+        second = name
+        third = null
+        fourth = null
+        fifth = null
+    }
+
+    def third(String name) {
+        third = name
+        fourth = null
+        fifth = null
+    }
+
+    def fourth(String name) {
+        fourth = name
+        fifth = null
+    }
+
+    def fifth(String name) {
+        fifth = name
+    }
+
+    def asTitle() {
+        return (first ?: '_') + ' // ' +
+            (second ?: '_') + ' // ' +
+            (third ?: '_') + ' // ' +
+            (fourth ?: '_') + ' // ' +
+            (fifth ?: '_')
+    }
+
+    def asTitleWithoutFirst() {
+        return [second, third, fourth, fifth].findAll { it != null }.join(' // ')
+    }
+}
+
+List<Map<String, String>> parseSourcesFromMarkdown(File docFile) {
+    def lines = docFile.readLines('UTF-8')
+
+    List<Map<String, String>> codeBlocks = []
+    def currentCodeBlock = ''
+    def currentCodeBlockPackage = ''
+    def codeBlockStarted = false
+    def title = new Header()
+
+    for (i in 0..lines.size()) {
+        def currentLine = lines[i]
+        def previousLine = i == 0 ? null : lines[i - 1]
+
+        if (currentLine == null) {
+            continue
+        }
+
+        if (codeBlockStarted) {
+            if (!currentLine.trim().startsWith('```')) {
+                currentCodeBlock += currentLine + '\n'
+            } else {
+                codeBlockStarted = false
+                codeBlocks += [
+                        title: title.asTitleWithoutFirst(),
+                        content: ('// TITLE: ' + title.asTitleWithoutFirst().replaceAll('\\*/', '') + '\n') + currentCodeBlock,
+                        codePackage: currentCodeBlockPackage
+                ]
+                currentCodeBlockPackage = ''
+                currentCodeBlock = ''
+            }
+
+            continue
+        }
+
+        switch (true) {
+            case currentLine.matches(/\s*#\s*[^#]+/): title.first(currentLine.replaceFirst(/\s*#\s*/, '')); break
+            case currentLine.matches(/\s*##\s*[^#]+/): title.second(currentLine.replaceFirst(/\s*##\s*/, '')); break
+            case currentLine.matches(/\s*###\s*[^#]+/): title.third(currentLine.replaceFirst(/\s*###\s*/, '')); break
+            case currentLine.matches(/\s*####\s*[^#]+/): title.fourth(currentLine.replaceFirst(/\s*####\s*/, '')); break
+            case currentLine.matches(/\s*#####\s*[^#]+/): title.fifth(currentLine.replaceFirst(/\s*#####\s*/, '')); break
+
+            case currentLine.contains('```kotlin'):
+                def skipBlock = false
+                previousLine?.eachMatch(/\[\/\/\]\:\ \#\ \((.*?)\)/) {
+                    if (it == 'no_check') {
+                        skipBlock = true
+                    } else if (it.startsWith('package:')) {
+                        currentCodeBlockPackage = it.replaceFirst('package:', '')
+                    }
+                }
+
+                if (!skipBlock) {
+                    codeBlockStarted = true
+                } else {
+                    currentCodeBlockPackage = ''
+                }
+                break
+        }
+    }
+    return codeBlocks
+}
+
+List<File> resolveSourceDirs(String fullDocName) {
+    def sourceDir = projectDir.toPath()
+        .resolve('doc-build')
+        .resolve(fullDocName)
+        .toFile()
+    sourceDir.mkdirs()
+
+    def helpersDir = projectDir.toPath()
+        .resolve(fullDocName)
+        .resolve('kotlin')
+        .toFile()
+
+    return [sourceDir, helpersDir]
+}
+
+String getFullDocName(File docFile) {
+    def fullDocName = docFile.absolutePath.replaceFirst(docDir.absolutePath, "")
+    if (fullDocName.endsWith(".md")) {
+        fullDocName = fullDocName.substring(0, fullDocName.length() - 3)
+    }
+    if (fullDocName.startsWith('/')) {
+        fullDocName = fullDocName.drop(1).toString()
+    }
+    return fullDocName
+}
+
+
+// todo: add all the other docs there :) (also that shit above definitely needs refactoring)
+generateTestBuildFor(docDir.toPath().resolve('core').resolve('runner').resolve('junit4-runner.md').toFile())
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+test.onlyIf { false }

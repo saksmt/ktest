@@ -114,6 +114,7 @@ one header with one value. Overriding policy obeys following rule: last header w
 So if you have `header("a", "1"), header("a", "2")` you will get `header("a", "2")` as result. It also applies to combination of
 `headers` with `header`:
 
+[//]: # (no_check)
 ```kotlin
 (headers(mapOf("a" to "1", "b" to "b")), header("a", "2")) // == header("a", "2"), header("b", "b")
 (header("a", "2"), headers(mapOf("a" to "1", "b" to "b"))) // == header("a", "1"), header("b", "b")
@@ -159,13 +160,13 @@ val url = createUrlDsl<MyUrls> { MyUrls(it) }
 
 // now you can use it like the following:
 
-val myUrl = url { gateway / customers / search } // = "/api/v2/customer-service/customers/search"
+val myUrl1 = url { gateway / customers / search } // = "/api/v2/customer-service/customers/search"
 // you can use `param` function to create parameters accepted by our REST component
-val myUrl = url { backend / customers / param("customerId") } // = "/customer-service-backend/customers/{customerId}"
+val myUrl2 = url { backend / customers / param("customerId") } // = "/customer-service-backend/customers/{customerId}"
 
 // combining this with REST simple queries and DSL-utils from ktest-utils we can get following:
 
-fun usage() {
+fun usage1() {
     rest {
         val result: String = using(url) {
             backend / customers / search

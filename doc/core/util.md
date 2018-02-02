@@ -26,7 +26,7 @@ This module contains some useful utilities
 ```kotlin
 import run.smt.ktest.util.resource.*
 
-fun usage() {
+fun usage1() {
     if ("myResource".resourceExists()) {
         val byteArrayResource = "myResource".loadAsBytes()
         val inputStreamResource = "myResource".load()
@@ -41,7 +41,7 @@ If you once been thinking what `assignableFrom` means you'll definitely like thi
 ```kotlin
 import run.smt.ktest.util.reflection.*
 
-fun usage() {
+fun usage2() {
     val myClassInstanceIsInstanceOfMyOtherClass = MyClass::class canBeAssignedTo MyOtherClass::class
     // there are also overloads for generics:
     val test = MyClass::class.canBeAssignedTo<MyOtherClass>()
@@ -55,7 +55,7 @@ fun usage() {
 ```kotlin
 import run.smt.ktest.duration.*
 
-fun usage() {
+fun usage3() {
     val testTime = inSeconds { 10.days() + 2.hours() + 3.minutes() + 15.seconds() + 2.millis() }
     
     println(inSeconds { 2.minutes() })
@@ -75,7 +75,7 @@ If you have async code that will complete some time and you need to test it you 
 ```kotlin
 import run.smt.ktest.eventually.*
 
-fun usage() {
+fun usage4() {
     eventually(Duration.ofSeconds(5)) {
         // some async checks that may throw exceptions
     }
@@ -112,7 +112,7 @@ fun <T> flatten(someList: List<List<T>>): List<T> {
 ```kotlin
 import run.smt.ktest.util.functional.Try.*
 
-fun usage() {
+fun usage5() {
     val myTry = Try.of<Int> { throw Exception() }
     val myOtherTry = Success(5)
 
@@ -135,7 +135,7 @@ fun usage() {
 import run.smt.ktest.util.functional.Either.*
 import run.smt.ktest.util.functional.identity
 
-fun usage() {
+fun usage6() {
     val myLeft = left<String, Int>("42")
     val myRight = right<String, Int>(42)
     
@@ -154,7 +154,7 @@ fun usage() {
 ```kotlin
 import run.smt.ktest.util.text.*
 
-fun usage() {
+fun usage7() {
     // works just like scala's stripMargin
     val myText = """
     | {
@@ -173,7 +173,7 @@ Allows you to convert arbitrary POJO to map:
 ```kotlin
 import run.smt.ktest.util.tomap.*
 
-fun usage(myPojo: MyPojo) {
+fun usage8(myPojo: MyPojo) {
     val myPojoAsMap = myPojo.toMap()
     val myPojoWithNestedPojosInFieldAsMap = myPojo.toMap(deep = true)
 }
@@ -211,7 +211,7 @@ object Url : UrlProvider {
     val b = "b"
 }
 
-fun usage() {
+fun usage9() {
     val url = createUrlDsl(Url)
 
     rest {

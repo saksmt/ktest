@@ -44,7 +44,7 @@ import run.smt.ktest.specs.AllureSpec
 import run.smt.ktest.resttest.*
 
 // note that you're free to use any spec from run.smt.ktest.specs package (including AllureSpec)
-class MySpec : BehaviorSpec({
+class MySpec1 : BehaviorSpec({
     given("my service") {
         `when`("search works") {
             // all arguments for restTest except for DSL are optional
@@ -98,7 +98,7 @@ You can easily use rest contexts from [REST](rest.md) in your RESTTest:
 import run.smt.ktest.specs.SimpleSpec
 import run.smt.ktest.resttest.*
 
-class MySpec : SimpleSpec({
+class MySpec2 : SimpleSpec({
     restTest["my.specific.context"] {
         url { "some" / "url" / "with" / param("param") }
         
@@ -118,6 +118,7 @@ So if it is acceptable behavior you don't need to anything else.
 But consider you've made some custom spec type `MySuperSpec` with case method adding some annotations/making some
 useful actions that you don't want to lose but you still want to use RESTTest - `RestTestSpecSkeleton` for the rescue!
 
+[//]: # (package:com.company.skel)
 ```kotlin
 package com.company.skel
 
@@ -136,7 +137,10 @@ class MySuperSpecSkeleton : RestTestSpecSkeleton<MySuperSpec> {
 
 Then you just need to register your new skeleton in RESTTest configuration:
 
+[//]: # (package:com.company.skel)
 ```kotlin
+package com.company.skel
+
 import run.smt.ktest.BaseSpec
 import run.smt.ktest.resttest.*
 import com.company.MySuperSpec

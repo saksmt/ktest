@@ -16,7 +16,7 @@ buildscript {
 
 def leafProjects = subprojects.findAll { it.projectDir.toPath().resolve("build.gradle").toFile().exists() }
 
-configure(leafProjects.findAll { it.name != project(':ktest-pom').name }) {
+configure(leafProjects.findAll { !(it.name in [project(':ktest-pom'), project(':doc-test')].collect { it.name }) }) {
     apply plugin: 'kotlin'
     apply plugin: 'maven'
     apply plugin: 'io.spring.dependency-management'

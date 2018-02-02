@@ -25,3 +25,5 @@ classes/
 
 .allure/
 allure-results/
+
+doc-test/doc-build/

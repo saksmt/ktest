@@ -99,7 +99,7 @@ Logs that will be available as attachments
 import run.smt.ktest.specs.*
 import run.smt.ktest.allure.*
 
-class MySpec : BehaviorSpec({
+class MySpec1 : BehaviorSpec({
     val log = autoClose(logger)
                 
     log.write("hello!")
@@ -120,7 +120,7 @@ class MySpec : BehaviorSpec({
 import run.smt.ktest.specs.AllureSpec
 import run.smt.ktest.allure.*
 
-class MySpec : AllureSpec({
+class MySpec2 : AllureSpec({
     epic("my service") {
         feature("my feature", metaInfo { owner("someone") }) {
             story("my story") {
