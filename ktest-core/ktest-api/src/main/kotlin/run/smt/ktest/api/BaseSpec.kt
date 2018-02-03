@@ -2,7 +2,6 @@ package run.smt.ktest.api
 
 import run.smt.ktest.api.internal.Internals
 import run.smt.ktest.api.internal.SpecBuilder
-import java.io.Closeable
 import java.util.*
 import run.smt.ktest.util.reflection.a as _a
 import run.smt.ktest.api.metaInfo as buildMetaInfo
@@ -23,9 +22,9 @@ abstract class BaseSpec {
         get() = this@BaseSpec.frozen
         set(value) { this@BaseSpec.frozen = value }
 
-    private val closeablesInReverseOrder = LinkedList<Closeable>()
+    private val closeablesInReverseOrder = LinkedList<AutoCloseable>()
 
-    fun <T : Closeable> autoClose(closeable: T): T {
+    fun <T : AutoCloseable> autoClose(closeable: T): T {
         return modify {
             closeablesInReverseOrder.addFirst(closeable)
             closeable

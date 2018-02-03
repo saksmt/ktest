@@ -63,6 +63,8 @@ rest { # there you describe configuration for default rest context
 
 ```kotlin
 import run.smt.ktest.rest.*
+import java.io.InputStream
+import org.hamcrest.CoreMatchers.containsString
 
 // Simple queries (will be automatically validated to have 2XX response code)
 val myResult: Account = rest {
@@ -133,7 +135,10 @@ As for NOOP adapter your headers will have priority since NOOP adapter provides 
 ```kotlin
 import run.smt.ktest.rest.url.UrlProvider
 import run.smt.ktest.rest.url.createUrlDsl
+import run.smt.ktest.rest.*
 import run.smt.ktest.config.get
+import run.smt.ktest.util.dsl.*
+import com.typesafe.config.Config
 
 // First you need to create your very own URL DSL
 

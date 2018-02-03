@@ -1,0 +1,2 @@
+class ResultPojo
+class Contained

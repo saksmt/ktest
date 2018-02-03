@@ -27,7 +27,7 @@ Provides some DSL for Jackson JSON library
 import run.smt.ktest.json.*
 
 fun usage1() {
-    mapper.writeValue(mapOf("hello", "world"))
+    println(mapper.writeValueAsString(mapOf("hello" to "world")))
 }
 ```
 
@@ -36,6 +36,8 @@ fun usage1() {
 ```kotlin
 import run.smt.ktest.json.*
 
+class MyPojo(/* POJO fields */)
+
 fun usage2() {
     val myPojo = mapper.readValue<MyPojo>(stringOrByteArrayOrStreamOrUrlOrFileOrReader)
 }
@@ -43,7 +45,10 @@ fun usage2() {
 
 ### TypeDSL
 
+[//]: # (package:typedsl)
 ```kotlin
+package typedsl
+
 import run.smt.ktest.json.*
 
 class MyGenericPojo<T> { /*some body*/ }
@@ -51,7 +56,8 @@ class MyGenericPojo<T> { /*some body*/ }
 fun usage3() {
     fun usage(mySource: String) {
         val myPojo: Map<String, Set<MyGenericPojo<List<String>>>> = mapper.readValue(mySource, type {
-            map(simple(String::class), set(generic(MyGenericPojo::class, list<String>())))
+            // sadly arbitrary generics still need type specialization...
+            map(simple(String::class), set(generic<MyGenericPojo<List<String>>>(MyGenericPojo::class, list<String>())))
         })
     }
 }
@@ -70,7 +76,10 @@ fun usage4(myPojo: MyPojo) {
 
 ### Deserializtion
 
+[//]: # (package:deserialization)
 ```kotlin
+package deserialization
+
 import run.smt.ktest.json.*
 import com.fasterxml.jackson.databind.JsonNode
 import com.jayway.jsonpath.* // if you have json-path as your dependency
@@ -91,7 +100,10 @@ fun usage5(myData: String) {
 
 ### Mapping
 
+[//]: # (package:mapping)
 ```kotlin
+package mapping
+
 import run.smt.ktest.json.*
 import com.fasterxml.jackson.databind.JsonNode
 import com.jayway.jsonpath.* // if you have json-path as your dependency

@@ -47,6 +47,7 @@ infix fun <R : Any> String.deserialize(type: TypeReference<R>) = mapper.readValu
 infix fun <R : Any> ByteArray.deserialize(type: TypeReference<R>) = mapper.readValue<R>(this, type)
 infix fun <R : Any> InputStream.deserialize(type: TypeReference<R>) = mapper.readValue<R>(this, type)
 
+inline fun <reified R: Any> JsonNode.mapTo(): R = mapTo(R::class)
 infix fun <R: Any> JsonNode.mapTo(type: TypeReference<R>): R = mapTo(mapper.constructType(type.type))
 infix fun <R: Any> JsonNode.mapTo(resultClass: Class<R>): R = mapTo { simple(resultClass) }
 infix fun <R: Any> JsonNode.mapTo(resultClass: KClass<R>): R = mapTo { simple(resultClass) }

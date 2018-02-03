@@ -28,7 +28,7 @@ import run.smt.ktest.specs.BehaviorSpec
 import run.smt.ktest.allure.*
 
 class SomeSpec : BehaviorSpec({
-    given("a service", metaInfo {
+    given("a service", metaInfo = {
         epic("my service")
     }) {
         `when`("something happens", metaInfo = {
@@ -100,7 +100,7 @@ import run.smt.ktest.specs.*
 import run.smt.ktest.allure.*
 
 class MySpec1 : BehaviorSpec({
-    val log = autoClose(logger)
+    val log = autoClose(logger())
                 
     log.write("hello!")
     log.dump(someObject) // will be written as prettified JSON
@@ -122,9 +122,9 @@ import run.smt.ktest.allure.*
 
 class MySpec2 : AllureSpec({
     epic("my service") {
-        feature("my feature", metaInfo { owner("someone") }) {
+        feature("my feature", metaInfo = { owner("someone") }) {
             story("my story") {
-                case("my test case", metaInfo {
+                case("my test case", metaInfo = {
                     muted()
                     severity(critical)
                     description("""

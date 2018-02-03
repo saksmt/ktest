@@ -53,7 +53,7 @@ fun usage2() {
 ### Time/Duration DSL
 
 ```kotlin
-import run.smt.ktest.duration.*
+import run.smt.ktest.util.duration.*
 
 fun usage3() {
     val testTime = inSeconds { 10.days() + 2.hours() + 3.minutes() + 15.seconds() + 2.millis() }
@@ -73,7 +73,8 @@ fun usage3() {
 If you have async code that will complete some time and you need to test it you can use `within` and `eventually`
 
 ```kotlin
-import run.smt.ktest.eventually.*
+import run.smt.ktest.util.eventually.*
+import java.time.Duration
 
 fun usage4() {
     eventually(Duration.ofSeconds(5)) {
@@ -114,12 +115,12 @@ import run.smt.ktest.util.functional.Try.*
 
 fun usage5() {
     val myTry = Try.of<Int> { throw Exception() }
-    val myOtherTry = Success(5)
+    val myOtherTry = success(5)
 
     fun applyToTry(attempt: Try<Int>): String {
         return attempt
             .map { it + 1 }
-            .mapTry { someCodeThatMayThrow(it) }.flatMap { Success(it) }
+            .mapTry { someCodeThatMayThrow(it) }.flatMap { success(it) }
             .value ?: "Exception occurred"
     }
     
@@ -139,12 +140,12 @@ fun usage6() {
     val myLeft = left<String, Int>("42")
     val myRight = right<String, Int>(42)
     
-    val myString = myLeft.unify(identity, { it.toString() })
+    val myString = myLeft.unify(identity(), { it.toString() })
     val myInt = myRight.unify({ it.toInt() }, identity())
     
     val mapped: Either<String, String> = myLeft.bimap(identity(), { it.toString() })
-    val leftMapped: Either<String, String> = myRight.mapLeft { it.toString() }
-    val rightMapped: Either<Int, Int> = myRight.mapRight { it.toInt() }
+    val leftMapped: Either<String, String> = myRight.mapRight { it.toString() }
+    val rightMapped: Either<Int, Int> = myRight.mapLeft { it.toInt() }
     val flippedLeft : Either<Int, String> = myLeft.flip
 }
 ```

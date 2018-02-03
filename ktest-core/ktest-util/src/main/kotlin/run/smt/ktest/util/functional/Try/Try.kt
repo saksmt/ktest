@@ -1,5 +1,7 @@
 package run.smt.ktest.util.functional.Try
 
+fun <T : Any> success(value: T): Try<T> = Success(value)
+
 sealed class Try<out T : Any>(
     val value: T?,
     val exception: Throwable?

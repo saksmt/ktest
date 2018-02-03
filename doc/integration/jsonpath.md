@@ -31,11 +31,12 @@ Since it is pretty easy to understand there will be only this sample, for more s
 import run.smt.ktest.json.type
 import run.smt.ktest.jsonpath.*
 import run.smt.ktest.jsonpath.criteria.filterNot
+import com.jayway.jsonpath.DocumentContext
 
 fun usage() {
     val jp = "myJson.json".loadAsJsonPath()
     val simpleQuery: DocumentContext = jp["$.myField"]
-    val filtering: DocumentContext = jp { "myField".exists() and "myOtherField" eq "10" }
+    val filtering: DocumentContext = jp filter { "myField".exists() and "myOtherField" eq "10" }
     val sqlStyle: DocumentContext = jp select "myField" where { "myOtherField" eq "12" }
     val complexSqlStyle: DocumentContext = jp select "$..outer[?]" where {
       "someField" eq "3" and "inner" exists true
@@ -53,7 +54,7 @@ fun usage() {
     // deserialization
     val myResult = simpleQuery castTo ResultPojo::class
     val myResult2: ResultPojo = simpleQuery.castTo()
-    val myResult3 = complexSqlStyle castTo type { list<Contained>() } 
+    val myResult3 = complexSqlStyle castTo { list<Contained>() } 
 }
 ```
 
@@ -68,6 +69,7 @@ import run.smt.ktest.util.text.*
 import run.smt.ktest.jsonpath.*
 import run.smt.ktest.jsonpath.criteria.*
 import run.smt.ktest.jsonpath.subtree.*
+import com.jayway.jsonpath.JsonPath
 
 val sourceJson = """
     | {
@@ -82,7 +84,7 @@ val sourceJson = """
     """.stripMargin()
 
 val jp = JsonPath.parse(sourceJson)
-val myResultSubtree = subtree(jp) {
+val myResultSubtree = extractSubtree(jp) {
     + "a.b" {
         + "b"
     }
@@ -94,12 +96,12 @@ val myResultSubtree = subtree(jp) {
 ///     "a1": { "b": "but need this" }
 /// }
 
-val otherWay = subtree(jp) {
+val otherWay = extractSubtree(jp) {
     + "a.b.b"
     + "a1"
 } // will give same result
 
-val yetAnotherWay = subtree(jp) {
+val yetAnotherWay = extractSubtree(jp) {
     + "a" {
         + "b" {
             + "b"
@@ -108,7 +110,7 @@ val yetAnotherWay = subtree(jp) {
     + "a1"
 } // will give same result
 
-val youCanUseFiltersToo = subtree(jp) {
+val youCanUseFiltersToo = extractSubtree(jp) {
     + "a.b.b"
     + filter {
         "@.b" eq "but need this"
@@ -119,7 +121,7 @@ val youAlsoCanStoreYourSubtreeSpecifications = createSubtree {
     + "hello.stored.subtrees"
 }
 
-val andThenApplyThemToYourJsonPath = subtree(jp, youAlsoCanStoreYourSubtreeSpecifications)
+val andThenApplyThemToYourJsonPath = extractSubtree(jp, youAlsoCanStoreYourSubtreeSpecifications)
 
 // huge example
 
@@ -153,6 +155,11 @@ val applicationSubtree = createSubtree {
 Reverse operation for extraction, will remove specified subtree leaving everything else untouched
 
 ```kotlin
+import run.smt.ktest.jsonpath.*
+import run.smt.ktest.jsonpath.criteria.*
+import run.smt.ktest.jsonpath.subtree.*
+import com.jayway.jsonpath.DocumentContext
+
 fun removeConnectionInfo(globalConfig: DocumentContext) {
     globalConfig.remove {
         // supports everything supported by extraction
@@ -182,6 +189,11 @@ fun removeConnectionInfo(globalConfig: DocumentContext) {
 **WARN:** It is renaming, **NOT MOVING**
 
 ```kotlin
+import run.smt.ktest.jsonpath.*
+import run.smt.ktest.jsonpath.criteria.*
+import run.smt.ktest.jsonpath.subtree.*
+import com.jayway.jsonpath.DocumentContext
+
 fun renameAllPasswordsToHashes(applicationConfig: DocumentContext) {
     applicationConfig.rename {
         "config.apps.app" {
@@ -218,6 +230,12 @@ fun renameApp(applicationConfig: DocumentContext) {
 You can add something to your tree:
 
 ```kotlin
+import run.smt.ktest.util.text.*
+import run.smt.ktest.jsonpath.*
+import run.smt.ktest.jsonpath.criteria.*
+import run.smt.ktest.jsonpath.subtree.*
+import com.jayway.jsonpath.DocumentContext
+
 fun addPasswordsTo(applicationConfig: DocumentContext) {
     applicationConfig.put {
         "config.apps.app" {

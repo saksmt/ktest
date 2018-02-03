@@ -185,8 +185,9 @@ object MySumSpec : BehaviorSpec({
     ```kotlin
     import run.smt.ktest.api.BaseSpec
     import run.smt.ktest.api.internal.SpecBuilder
+    import run.smt.ktest.api.MetaInfoDSL
     
-    abstract class SuiteAndCheckSpec(body: MySpecStyle.() -> Unit) : BaseSpec {
+    abstract class SuiteAndCheckSpec(body: SuiteAndCheckSpec.() -> Unit) : BaseSpec() {
         init { body() }
     
         infix fun String.suite(body: () -> Unit) = SpecBuilder.suite(this, body)

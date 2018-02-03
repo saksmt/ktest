@@ -28,7 +28,7 @@ Sadly you need to write some boilerplate to make this work. In this section we a
 All you need to do is:
 
 ```kotlin
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.resttest.*
 
 val BaseSpec.restTest
@@ -40,8 +40,9 @@ val BaseSpec.restTest
 ### Sample
 
 ```kotlin
-import run.smt.ktest.specs.AllureSpec
+import run.smt.ktest.specs.BehaviorSpec
 import run.smt.ktest.resttest.*
+import run.smt.ktest.allure.*
 
 // note that you're free to use any spec from run.smt.ktest.specs package (including AllureSpec)
 class MySpec1 : BehaviorSpec({
@@ -68,7 +69,9 @@ class MySpec1 : BehaviorSpec({
                     assert(response.fullName == "John Doe")
                 }
                 
-                expect<Customer> {
+                // you can also check httpCode by yourself, just use your data paired with Int!
+                expect<Pair<Int, Customer>> { (httpCode, it) ->
+                    assert(httpCode == 222)
                     assert(it.firstName == "John")
                 }
             }
@@ -104,7 +107,9 @@ class MySpec2 : SimpleSpec({
         
         OPTIONS(header("X-CompanyHeader", "value"), pathParam("param", 123))
         
-        expect<String> { assert(it.isNotBlank()) }
+        // note that in this case you MUST define your arguments in lambda to avoid ambiguity with
+        // HTTP code checking expectations
+        expect<String> { it -> assert(it.isNotBlank()) }
     }
 })
 ```
@@ -141,10 +146,11 @@ Then you just need to register your new skeleton in RESTTest configuration:
 ```kotlin
 package com.company.skel
 
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.resttest.*
 import com.company.MySuperSpec
 import com.company.skel.MySuperSpecSkeleton
+import Url
 
 val BaseSpec.restTest
     get() = createRestTestDSL<Url>(this) {

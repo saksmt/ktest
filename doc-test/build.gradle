@@ -16,6 +16,8 @@ dependencies {
     compile project(':ktest-integration:ktest-jsonpath')
     compile project(':ktest-integration:ktest-rest')
     compile project(':ktest-integration:ktest-resttest')
+
+    compile 'com.natpryce:hamkrest'
 }
 
 repositories {
@@ -30,21 +32,36 @@ ext {
 def generateTestBuildFor(File docFile) {
     String fullDocName = getFullDocName(docFile)
     def actualName = fullDocName.replaceAll('/', '__').replaceAll(/[^a-zA-Z0-9_]/, "")
+
+    def parser = new MarkdownCodeParser(docFile)
+    parser.parse()
+
+    if (parser.isEmpty()) {
+        return
+    }
+
     def (File sourceDir, File helpersDir) = resolveSourceDirs(fullDocName)
 
-    parseSourcesFromMarkdown(docFile).eachWithIndex { data, int index ->
-        data.with {
-            def fileName = title.replaceAll('//', '--').replaceAll(/[^a-zA-Z_0-9]/, '')
-            def targetDir = sourceDir.toPath()
-            if (codePackage != '') {
-                targetDir = targetDir.resolve(codePackage.replaceAll('.', '/'))
-            }
-            targetDir.resolve("codeBlock___${fileName}___${index}.kt").toFile().withWriter('UTF-8') {
-                it.write(content)
-            }
+    parser.eachIndexedCodeBlock { int index, String title, String content, String codePackage ->
+        def fileName = titleToFileName(title)
+        def targetDir = sourceDir.toPath()
+        if (codePackage != '') {
+            targetDir = targetDir.resolve(codePackage.replaceAll('\\.', '/'))
+            targetDir.toFile().mkdirs()
+        }
+        targetDir.resolve("codeBlock${index}__${fileName}.kt").toFile().withWriter('UTF-8') {
+            it.write(content)
         }
     }
 
+    configureBuild(actualName, sourceDir, helpersDir)
+}
+
+String titleToFileName(String title) {
+    return title.trim().replaceAll('//', '-').replaceAll(' ', '_').replaceAll(/[^a-zA-Z_0-9\-]/, '')
+}
+
+def configureBuild(String actualName, File sourceDir, File helpersDir) {
     sourceSets.create(actualName) {
         kotlin {
             srcDir sourceDir
@@ -67,120 +84,134 @@ def generateTestBuildFor(File docFile) {
 }
 
 class Header {
-    private def first = null
-    private def second = null
-    private def third = null
-    private def fourth = null
-    private def fifth = null
 
-    def first(String name) {
-        first = name
-        second = null
-        third = null
-        fourth = null
-        fifth = null
-    }
+    private def headings = []
 
-    def second(String name) {
-        second = name
-        third = null
-        fourth = null
-        fifth = null
-    }
+    def set(int level, String heading) {
+        if (headings.size() < level) {
+            headings += [0..(headings.size() - level)].collect { null } // initialization :P
+        }
 
-    def third(String name) {
-        third = name
-        fourth = null
-        fifth = null
-    }
-
-    def fourth(String name) {
-        fourth = name
-        fifth = null
-    }
-
-    def fifth(String name) {
-        fifth = name
-    }
-
-    def asTitle() {
-        return (first ?: '_') + ' // ' +
-            (second ?: '_') + ' // ' +
-            (third ?: '_') + ' // ' +
-            (fourth ?: '_') + ' // ' +
-            (fifth ?: '_')
+        headings[level - 1] = heading
+        headings = headings.subList(0, level) // cleanup child headings
     }
 
     def asTitleWithoutFirst() {
-        return [second, third, fourth, fifth].findAll { it != null }.join(' // ')
+        return headings.drop(1).findAll { it != null }.join(' // ')
     }
 }
 
-List<Map<String, String>> parseSourcesFromMarkdown(File docFile) {
-    def lines = docFile.readLines('UTF-8')
+class MarkdownCodeParser {
+    private static def KOTLIN_CODE_BLOCK_START = '```kotlin'
+    private static def CODE_BLOCK_END = '```'
+    private static def PACKAGE_MODIFIER = 'package:'
+    private static def SKIP_MODIFIER = 'no_check'
+    private static def METADATA_REGEX = /\[\/\/\]\:\ \#\ \((.*?)\)/
+    private static def HEADER_REGEX = /\s*(#+)\s*([^#]+)/
 
-    List<Map<String, String>> codeBlocks = []
-    def currentCodeBlock = ''
-    def currentCodeBlockPackage = ''
-    def codeBlockStarted = false
-    def title = new Header()
+    private def currentCodeBlock = ''
+    private def currentCodeBlockPackage = ''
+    private def codeBlockStarted = false
+    private def title = new Header()
+    private List<Map<String, String>> codeBlocks = []
+    private List<String> lines
 
-    for (i in 0..lines.size()) {
-        def currentLine = lines[i]
-        def previousLine = i == 0 ? null : lines[i - 1]
+    MarkdownCodeParser(File docFile) {
+        lines = docFile.readLines('UTF-8')
+    }
 
-        if (currentLine == null) {
-            continue
-        }
+    boolean isEmpty() {
+        return codeBlocks.every { it.content.isEmpty() }
+    }
 
-        if (codeBlockStarted) {
-            if (!currentLine.trim().startsWith('```')) {
-                currentCodeBlock += currentLine + '\n'
-            } else {
-                codeBlockStarted = false
-                codeBlocks += [
-                        title: title.asTitleWithoutFirst(),
-                        content: ('// TITLE: ' + title.asTitleWithoutFirst().replaceAll('\\*/', '') + '\n') + currentCodeBlock,
-                        codePackage: currentCodeBlockPackage
-                ]
-                currentCodeBlockPackage = ''
-                currentCodeBlock = ''
+    def eachCodeBlock(Closure consumer) {
+        codeBlocks.each {
+            if (!it.content.isEmpty()) {
+                consumer(it.title, it.content, it.codePackage)
             }
-
-            continue
-        }
-
-        switch (true) {
-            case currentLine.matches(/\s*#\s*[^#]+/): title.first(currentLine.replaceFirst(/\s*#\s*/, '')); break
-            case currentLine.matches(/\s*##\s*[^#]+/): title.second(currentLine.replaceFirst(/\s*##\s*/, '')); break
-            case currentLine.matches(/\s*###\s*[^#]+/): title.third(currentLine.replaceFirst(/\s*###\s*/, '')); break
-            case currentLine.matches(/\s*####\s*[^#]+/): title.fourth(currentLine.replaceFirst(/\s*####\s*/, '')); break
-            case currentLine.matches(/\s*#####\s*[^#]+/): title.fifth(currentLine.replaceFirst(/\s*#####\s*/, '')); break
-
-            case currentLine.contains('```kotlin'):
-                def skipBlock = false
-                previousLine?.eachMatch(/\[\/\/\]\:\ \#\ \((.*?)\)/) {
-                    if (it == 'no_check') {
-                        skipBlock = true
-                    } else if (it.startsWith('package:')) {
-                        currentCodeBlockPackage = it.replaceFirst('package:', '')
-                    }
-                }
-
-                if (!skipBlock) {
-                    codeBlockStarted = true
-                } else {
-                    currentCodeBlockPackage = ''
-                }
-                break
         }
     }
-    return codeBlocks
+
+    def eachIndexedCodeBlock(Closure consumer) {
+        codeBlocks.indexed().each { idx, it ->
+            if (!it.content.isEmpty()) {
+                consumer(idx, it.title, it.content, it.codePackage)
+            }
+        }
+    }
+
+    def parse() {
+        for (i in 0..lines.size()) {
+            def currentLine = lines[i]
+            def previousLine = i == 0 ? null : lines[i - 1]
+
+            if (currentLine == null) {
+                continue
+            }
+
+            if (codeBlockStarted) {
+                if (!currentLine.trim().startsWith(CODE_BLOCK_END)) {
+                    currentCodeBlock += currentLine + '\n'
+                } else {
+                    parseBlockEnd()
+                }
+
+                continue
+            }
+
+            parseHeaders(currentLine)
+            parseBlockStart(currentLine, previousLine)
+        }
+    }
+
+    private def parseHeaders(String line) {
+        line.eachMatch(HEADER_REGEX) { whole, String level, String heading ->
+            title.set(level.length(), heading)
+        }
+    }
+
+    private def parseBlockStart(String line, String previousLine) {
+        if (!line.contains(KOTLIN_CODE_BLOCK_START)) {
+            return
+        }
+
+        def skipBlock = false
+        previousLine?.eachMatch(METADATA_REGEX) { whole, it ->
+            if (it == SKIP_MODIFIER) {
+                skipBlock = true
+            } else if (it.startsWith(PACKAGE_MODIFIER)) {
+                currentCodeBlockPackage = it.replaceFirst(PACKAGE_MODIFIER, '')
+            }
+        }
+
+        if (!skipBlock) {
+            codeBlockStarted = true
+        } else {
+            currentCodeBlockPackage = ''
+        }
+    }
+
+    private def parseBlockEnd() {
+        codeBlocks.add([
+            title      : title.asTitleWithoutFirst(),
+            content    : generateTitleComment() + currentCodeBlock,
+            codePackage: currentCodeBlockPackage
+        ])
+
+        codeBlockStarted = false
+        currentCodeBlockPackage = ''
+        currentCodeBlock = ''
+    }
+
+    private String generateTitleComment() {
+        '// TITLE: ' + title.asTitleWithoutFirst().replaceAll('\\*/', '') + '\n'
+    }
 }
 
 List<File> resolveSourceDirs(String fullDocName) {
     def sourceDir = projectDir.toPath()
-        .resolve('doc-build')
+        .resolve('build')
+        .resolve('doc-generated-sources')
         .resolve(fullDocName)
         .toFile()
     sourceDir.mkdirs()
@@ -204,13 +235,16 @@ String getFullDocName(File docFile) {
     return fullDocName
 }
 
-
-// todo: add all the other docs there :) (also that shit above definitely needs refactoring)
-generateTestBuildFor(docDir.toPath().resolve('core').resolve('runner').resolve('junit4-runner.md').toFile())
+fileTree(docDir).findAll {
+    it.name != 'README.md'
+}.each {
+    generateTestBuildFor(it)
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         jvmTarget = "1.8"
+        suppressWarnings = true // we don't need all the "never used" stuff...
     }
 }
 

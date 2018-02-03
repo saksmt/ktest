@@ -85,7 +85,7 @@ Also note that for options unspecified in kotlin defaults will be taken from glo
 
 ```kotlin
 import run.smt.ktest.json.matcher.api.*
-import com.fasterxml.jackson.databing.JsonNode
+import com.fasterxml.jackson.databind.JsonNode
 
 fun usage2(firstNode: JsonNode, secondNode: JsonNode, configuration: MatcherConfig) {
     val myComparator = jsonComparator {
