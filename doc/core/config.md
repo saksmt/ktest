@@ -34,6 +34,7 @@ This integration layer will load (in order of priority):
 ```kotlin
 import run.smt.ktest.config.*
 import com.typesafe.config.Config
+import java.time.Duration
 
 fun usage(someOtherConfig: Config) {
     val someInt: Int = config["some.int"]

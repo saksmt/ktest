@@ -1,0 +1,3 @@
+class MyClass
+class MyOtherClass
+

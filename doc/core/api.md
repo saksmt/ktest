@@ -25,7 +25,7 @@ This module contains base code of kTest (and actually it is kTest) providing abi
 import org.junit.Assert.*
 import run.smt.ktest.specs.BehaviorSpec
 
-object MySpec : BehaviorSpec({
+object MySpec1 : BehaviorSpec({
     val thisIsAwesome = true
 
     given("kotlin") {
@@ -49,7 +49,7 @@ you want. Though recommended library is [hamkrest](https://github.com/npryce/ham
 import org.junit.Assert.*
 import run.smt.ktest.specs.BehaviorSpec
 
-object MySpec : BehaviorSpec({
+object MySpec2 : BehaviorSpec({
     val thisIsAwesome = true
 
     given("kotlin") {
@@ -68,7 +68,7 @@ object MySpec : BehaviorSpec({
 import org.junit.Assert.*
 import run.smt.ktest.specs.FeatureSpec
 
-object MySpec : FeatureSpec({
+object MySpec3 : FeatureSpec({
     feature("usage of kTest") {
         scenario("awesomeness") {
             assertTrue(true)
@@ -83,7 +83,7 @@ object MySpec : FeatureSpec({
 import org.junit.Assert.*
 import run.smt.ktest.specs.FreeSpec
 
-object MySpec : FreeSpec({
+object MySpec4 : FreeSpec({
     "kTest" - {
         "is awesome" {
             assertTrue(true)
@@ -98,7 +98,7 @@ object MySpec : FreeSpec({
 import org.junit.Assert.*
 import run.smt.ktest.specs.SimpleSpec
 
-object MySpec : SimpleSpec({
+object MySpec5 : SimpleSpec({
     suite("kTest") {
         test("awesomeness test") {
             assertTrue(true)
@@ -113,7 +113,7 @@ object MySpec : SimpleSpec({
 import org.junit.Assert.*
 import run.smt.ktest.specs.WordSpec
 
-object MySpec : WordSpec({
+object MySpec6 : WordSpec({
     "kTest" should {
         "provide awesomeness" {
             assertTrue(true)
@@ -127,7 +127,7 @@ object MySpec : WordSpec({
 ```kotlin
 import run.smt.ktest.specs.BehaviorSpec
 
-object MySpec : BehaviorSpec({
+object MySpec7 : BehaviorSpec({
     given("kTest with meta info", {
         disable("disabling reason")
     }) {
@@ -185,8 +185,9 @@ object MySumSpec : BehaviorSpec({
     ```kotlin
     import run.smt.ktest.api.BaseSpec
     import run.smt.ktest.api.internal.SpecBuilder
+    import run.smt.ktest.api.MetaInfoDSL
     
-    abstract class SuiteAndCheckSpec(body: MySpecStyle.() -> Unit) : BaseSpec {
+    abstract class SuiteAndCheckSpec(body: SuiteAndCheckSpec.() -> Unit) : BaseSpec() {
         init { body() }
     
         infix fun String.suite(body: () -> Unit) = SpecBuilder.suite(this, body)
@@ -199,8 +200,9 @@ object MySumSpec : BehaviorSpec({
 2. Use your brand new spec style:
     ```kotlin
     import org.junit.Assert.*
+    import SuiteAndCheckSpec
     
-    object MySpec : SuiteAndCheckSpec({
+    object MySpec8 : SuiteAndCheckSpec({
         "kTest even supports" suite {
             "my custom spec styles" check {
                 assertTrue(true)

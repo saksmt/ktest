@@ -28,7 +28,7 @@ Sadly you need to write some boilerplate to make this work. In this section we a
 All you need to do is:
 
 ```kotlin
-import run.smt.ktest.BaseSpec
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.resttest.*
 
 val BaseSpec.restTest
@@ -40,11 +40,12 @@ val BaseSpec.restTest
 ### Sample
 
 ```kotlin
-import run.smt.ktest.specs.AllureSpec
+import run.smt.ktest.specs.BehaviorSpec
 import run.smt.ktest.resttest.*
+import run.smt.ktest.allure.*
 
 // note that you're free to use any spec from run.smt.ktest.specs package (including AllureSpec)
-class MySpec : BehaviorSpec({
+class MySpec1 : BehaviorSpec({
     given("my service") {
         `when`("search works") {
             // all arguments for restTest except for DSL are optional
@@ -68,7 +69,9 @@ class MySpec : BehaviorSpec({
                     assert(response.fullName == "John Doe")
                 }
                 
-                expect<Customer> {
+                // you can also check httpCode by yourself, just use your data paired with Int!
+                expect<Pair<Int, Customer>> { (httpCode, it) ->
+                    assert(httpCode == 222)
                     assert(it.firstName == "John")
                 }
             }
@@ -98,13 +101,15 @@ You can easily use rest contexts from [REST](rest.md) in your RESTTest:
 import run.smt.ktest.specs.SimpleSpec
 import run.smt.ktest.resttest.*
 
-class MySpec : SimpleSpec({
+class MySpec2 : SimpleSpec({
     restTest["my.specific.context"] {
         url { "some" / "url" / "with" / param("param") }
         
         OPTIONS(header("X-CompanyHeader", "value"), pathParam("param", 123))
         
-        expect<String> { assert(it.isNotBlank()) }
+        // note that in this case you MUST define your arguments in lambda to avoid ambiguity with
+        // HTTP code checking expectations
+        expect<String> { it -> assert(it.isNotBlank()) }
     }
 })
 ```
@@ -118,6 +123,7 @@ So if it is acceptable behavior you don't need to anything else.
 But consider you've made some custom spec type `MySuperSpec` with case method adding some annotations/making some
 useful actions that you don't want to lose but you still want to use RESTTest - `RestTestSpecSkeleton` for the rescue!
 
+[//]: # (package:com.company.skel)
 ```kotlin
 package com.company.skel
 
@@ -136,11 +142,15 @@ class MySuperSpecSkeleton : RestTestSpecSkeleton<MySuperSpec> {
 
 Then you just need to register your new skeleton in RESTTest configuration:
 
+[//]: # (package:com.company.skel)
 ```kotlin
-import run.smt.ktest.BaseSpec
+package com.company.skel
+
+import run.smt.ktest.api.BaseSpec
 import run.smt.ktest.resttest.*
 import com.company.MySuperSpec
 import com.company.skel.MySuperSpecSkeleton
+import Url
 
 val BaseSpec.restTest
     get() = createRestTestDSL<Url>(this) {

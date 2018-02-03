@@ -65,7 +65,7 @@ Simple as follows:
 ```kotlin
 import run.smt.ktest.db.db
 
-fun usage() {
+fun usage1() {
     "databaseName".db {
         // here you're in context of database "databaseName" connection!
     }
@@ -82,7 +82,7 @@ fun usage() {
 import run.smt.ktest.db.db
 import run.smt.ktest.db.query.select
 
-fun usage() {
+fun usage2() {
     "app".db {
         // mapping result to POJO
         val singleResult = select<ClassWhichWouldBeUsedForMapping>("SELECT * FROM world WHERE :parameterName IS NOT NULL") {
@@ -93,7 +93,7 @@ fun usage() {
             // WARNING: PARAMETERS FROM POJO WILL HAVE HIGHEST PRIORITY SO ALL OTHERS WOULD BE IGNORED!!!
         }.single() // here you say that you want single result
         
-        val multipleResults: List<ClassWhichWouldBeUsedForMapping> = select {
+        val multipleResults: List<ClassWhichWouldBeUsedForMapping> = select<ClassWhichWouldBeUsedForMapping> {
             query = "SELECT ..." // yeah, it's totally legal to omit parameter and set it later, right inside builder
         }.asList() // here you say that you want multiple results
         
@@ -138,7 +138,7 @@ import run.smt.ktest.db.query.insert
 import run.smt.ktest.db.query.update
 import run.smt.ktest.db.query.delete
 
-fun usage() {
+fun usage3() {
     "app".db {
         insert("INSERT ...") {
             // same syntax for parameters as in SELECT
@@ -165,37 +165,37 @@ fun usage() {
 import run.smt.ktest.db.db
 import run.smt.ktest.db.query.call
 import run.smt.ktest.db.mapping.Column
-import run.smt.ktest.util.text.stipMargin
+import run.smt.ktest.util.text.stripMargin
 import java.sql.JDBCType
 
-data class MyPojo(
+data class MyPojo1(
     var parameter1: String? = null,
     @Column("parameter2")
     var output: Long? = null
 )
 
-fun usage() {
+fun usage4() {
     "app".db {
-        val result = call<MyPojo>("{call my_stored_procedure(:parameter1, :parameter2)}") {
+        val result = call<MyPojo1>("{call my_stored_procedure(:parameter1, :parameter2)}") {
             parameter("parameter1", "value") // if you omit parameter it will be set to null
             // for output parameters you need to specify types!
             outParameter("parameter2", JDBCType.BIGINT) // Yeah, you need to use "BIGINT" to map it to `Long`
         }.single() // list is not available for callable statements!
         
-        val result: Map<String, Any?> = call {
+        val result1: Map<String, Any?>? = call<Map<String, Any?>> {
             // you can use lateinit query like everywhere else
             query = """
                 | DECLARE
-                |   myParam VARCHAR2(100) := :parameter1
+                |   myParam VARCHAR2(100) := :someField
                 | BEGIN
                 |   :parameter2 := 0;
                 | END;
-            """.stripMargin
+            """.stripMargin()
             
-            parametersFrom(MyPojo(parameter1 = "hello")) // it works too!
+            parametersFrom(MyPojo(someField = "hello")) // it works too!
             
             // you must define all out parameters otherwise it will fail on trying to think that it is in-param
-            outParmeter("parameter2", JDBCType.BIGINT)
+            outParameter("parameter2", JDBCType.BIGINT)
         }.asMap()
     }
 }
@@ -257,9 +257,13 @@ class MyTestDataRegistry(private val loadJsonResource: (String) -> InputStream) 
 #### Usage
 
 ```kotlin
+import run.smt.ktest.db.registry.TestDataRegistry
+import run.smt.ktest.util.resource.*
+import com.fasterxml.jackson.databind.JsonNode
+
 val testData: TestDataRegistry by lazy { MyTestDataRegistry({ resourceName -> "test-data/$resourceName.json".load() }) }
 
-fun usage() {
+fun usage5() {
     // Insert fresh entity1 into database (from "resources/test-data/some-entity1-json.json")
     testData.setup<Entity1>("some-entity1-json")
     
@@ -268,7 +272,7 @@ fun usage() {
     
     // Usage without inserting into database
     val ent2: Entity2? = testData.load("entity2")
-    val ent2: JsonNode? = testData.load("entity2")
+    val sameAsEnt2: JsonNode? = testData.load("entity2")
     val ents: List<Entity2> = testData.loadAll("entities-2")
 }
 ```

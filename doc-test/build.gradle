@@ -1,0 +1,251 @@
+apply plugin: 'kotlin'
+apply plugin: 'maven'
+apply plugin: 'io.spring.dependency-management'
+apply from: "${rootDir}/dependencies.gradle"
+
+dependencies {
+    compile project(':ktest-core:ktest-util')
+    compile project(':ktest-core:ktest-api')
+    compile project(':ktest-core:ktest-config')
+    compile project(':ktest-core:ktest-runner:ktest-runner-junit4')
+
+    compile project(':ktest-integration:ktest-allure')
+    compile project(':ktest-integration:ktest-db')
+    compile project(':ktest-integration:ktest-jackson')
+    compile project(':ktest-integration:ktest-json-matchers')
+    compile project(':ktest-integration:ktest-jsonpath')
+    compile project(':ktest-integration:ktest-rest')
+    compile project(':ktest-integration:ktest-resttest')
+
+    compile 'com.natpryce:hamkrest'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    docDir = rootDir.toPath().resolve('doc').toFile()
+}
+
+def generateTestBuildFor(File docFile) {
+    String fullDocName = getFullDocName(docFile)
+    def actualName = fullDocName.replaceAll('/', '__').replaceAll(/[^a-zA-Z0-9_]/, "")
+
+    def parser = new MarkdownCodeParser(docFile)
+    parser.parse()
+
+    if (parser.isEmpty()) {
+        return
+    }
+
+    def (File sourceDir, File helpersDir) = resolveSourceDirs(fullDocName)
+
+    parser.eachIndexedCodeBlock { int index, String title, String content, String codePackage ->
+        def fileName = titleToFileName(title)
+        def targetDir = sourceDir.toPath()
+        if (codePackage != '') {
+            targetDir = targetDir.resolve(codePackage.replaceAll('\\.', '/'))
+            targetDir.toFile().mkdirs()
+        }
+        targetDir.resolve("codeBlock${index}__${fileName}.kt").toFile().withWriter('UTF-8') {
+            it.write(content)
+        }
+    }
+
+    configureBuild(actualName, sourceDir, helpersDir)
+}
+
+String titleToFileName(String title) {
+    return title.trim().replaceAll('//', '-').replaceAll(' ', '_').replaceAll(/[^a-zA-Z_0-9\-]/, '')
+}
+
+def configureBuild(String actualName, File sourceDir, File helpersDir) {
+    sourceSets.create(actualName) {
+        kotlin {
+            srcDir sourceDir
+            srcDir helpersDir
+        }
+
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+
+    configurations.getByName("${actualName}Compile") {
+        extendsFrom configurations.compile
+    }
+
+    configurations.getByName("${actualName}Runtime") {
+        extendsFrom configurations.runtime
+    }
+
+    build.dependsOn tasks["${actualName}Classes"]
+}
+
+class Header {
+
+    private def headings = []
+
+    def set(int level, String heading) {
+        if (headings.size() < level) {
+            headings += [0..(headings.size() - level)].collect { null } // initialization :P
+        }
+
+        headings[level - 1] = heading
+        headings = headings.subList(0, level) // cleanup child headings
+    }
+
+    def asTitleWithoutFirst() {
+        return headings.drop(1).findAll { it != null }.join(' // ')
+    }
+}
+
+class MarkdownCodeParser {
+    private static def KOTLIN_CODE_BLOCK_START = '```kotlin'
+    private static def CODE_BLOCK_END = '```'
+    private static def PACKAGE_MODIFIER = 'package:'
+    private static def SKIP_MODIFIER = 'no_check'
+    private static def METADATA_REGEX = /\[\/\/\]\:\ \#\ \((.*?)\)/
+    private static def HEADER_REGEX = /\s*(#+)\s*([^#]+)/
+
+    private def currentCodeBlock = ''
+    private def currentCodeBlockPackage = ''
+    private def codeBlockStarted = false
+    private def title = new Header()
+    private List<Map<String, String>> codeBlocks = []
+    private List<String> lines
+
+    MarkdownCodeParser(File docFile) {
+        lines = docFile.readLines('UTF-8')
+    }
+
+    boolean isEmpty() {
+        return codeBlocks.every { it.content.isEmpty() }
+    }
+
+    def eachCodeBlock(Closure consumer) {
+        codeBlocks.each {
+            if (!it.content.isEmpty()) {
+                consumer(it.title, it.content, it.codePackage)
+            }
+        }
+    }
+
+    def eachIndexedCodeBlock(Closure consumer) {
+        codeBlocks.indexed().each { idx, it ->
+            if (!it.content.isEmpty()) {
+                consumer(idx, it.title, it.content, it.codePackage)
+            }
+        }
+    }
+
+    def parse() {
+        for (i in 0..lines.size()) {
+            def currentLine = lines[i]
+            def previousLine = i == 0 ? null : lines[i - 1]
+
+            if (currentLine == null) {
+                continue
+            }
+
+            if (codeBlockStarted) {
+                if (!currentLine.trim().startsWith(CODE_BLOCK_END)) {
+                    currentCodeBlock += currentLine + '\n'
+                } else {
+                    parseBlockEnd()
+                }
+
+                continue
+            }
+
+            parseHeaders(currentLine)
+            parseBlockStart(currentLine, previousLine)
+        }
+    }
+
+    private def parseHeaders(String line) {
+        line.eachMatch(HEADER_REGEX) { whole, String level, String heading ->
+            title.set(level.length(), heading)
+        }
+    }
+
+    private def parseBlockStart(String line, String previousLine) {
+        if (!line.contains(KOTLIN_CODE_BLOCK_START)) {
+            return
+        }
+
+        def skipBlock = false
+        previousLine?.eachMatch(METADATA_REGEX) { whole, it ->
+            if (it == SKIP_MODIFIER) {
+                skipBlock = true
+            } else if (it.startsWith(PACKAGE_MODIFIER)) {
+                currentCodeBlockPackage = it.replaceFirst(PACKAGE_MODIFIER, '')
+            }
+        }
+
+        if (!skipBlock) {
+            codeBlockStarted = true
+        } else {
+            currentCodeBlockPackage = ''
+        }
+    }
+
+    private def parseBlockEnd() {
+        codeBlocks.add([
+            title      : title.asTitleWithoutFirst(),
+            content    : generateTitleComment() + currentCodeBlock,
+            codePackage: currentCodeBlockPackage
+        ])
+
+        codeBlockStarted = false
+        currentCodeBlockPackage = ''
+        currentCodeBlock = ''
+    }
+
+    private String generateTitleComment() {
+        '// TITLE: ' + title.asTitleWithoutFirst().replaceAll('\\*/', '') + '\n'
+    }
+}
+
+List<File> resolveSourceDirs(String fullDocName) {
+    def sourceDir = projectDir.toPath()
+        .resolve('build')
+        .resolve('doc-generated-sources')
+        .resolve(fullDocName)
+        .toFile()
+    sourceDir.mkdirs()
+
+    def helpersDir = projectDir.toPath()
+        .resolve(fullDocName)
+        .resolve('kotlin')
+        .toFile()
+
+    return [sourceDir, helpersDir]
+}
+
+String getFullDocName(File docFile) {
+    def fullDocName = docFile.absolutePath.replaceFirst(docDir.absolutePath, "")
+    if (fullDocName.endsWith(".md")) {
+        fullDocName = fullDocName.substring(0, fullDocName.length() - 3)
+    }
+    if (fullDocName.startsWith('/')) {
+        fullDocName = fullDocName.drop(1).toString()
+    }
+    return fullDocName
+}
+
+fileTree(docDir).findAll {
+    it.name != 'README.md'
+}.each {
+    generateTestBuildFor(it)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        suppressWarnings = true // we don't need all the "never used" stuff...
+    }
+}
+
+test.onlyIf { false }
