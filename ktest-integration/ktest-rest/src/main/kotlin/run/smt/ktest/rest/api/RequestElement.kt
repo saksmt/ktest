@@ -26,6 +26,7 @@ interface RequestElementBuilder {
 
     fun queryParam(param: Pair<String, Any?>): RequestElement = queryParam(param.first, param.second)
     fun queryParam(name: String, value: Any?): RequestElement = RequestElement.QueryParameter(name, value)
+    fun queryParam(name: String): RequestElement = queryParam(name, true)
     fun queryParams(params: List<Pair<String, Any?>>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> queryParam(n, v) })
     fun queryParams(params: Map<String, Any?>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> queryParam(n, v) })
 
