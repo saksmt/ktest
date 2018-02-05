@@ -62,7 +62,7 @@ object MySpec : AllureSpec({
 })
 ```
 
-For more see [docs](doc/README.md)
+For more see [docs](doc/README.md) and [samples](sample)
 
 ## License
 
