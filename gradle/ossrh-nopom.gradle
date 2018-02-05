@@ -4,7 +4,7 @@ signing {
     sign configurations.archives
 }
 
-project.version = (gradle.startParameter.taskNames.contains('release') ? project.version : "${project.version}-SNAPSHOT").toString()
+project.version = (gradle.startParameter.taskNames.contains('release') ? project.version : "${project.version.toString().replaceAll(/-.*$/, '')}-SNAPSHOT").toString()
 
 def snapshotRepo = 'https://oss.sonatype.org/content/repositories/snapshots'
 def releaseRepo = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'

@@ -1,6 +1,6 @@
 # kTest
 
-[![CircleCI](https://img.shields.io/circleci/project/github/saksmt/ktest.svg?style=flat-square)](https://circleci.com/gh/saksmt/ktest) ![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/oss.sonatype.org/content/repositories/snapshots/run/smt/ktest/ktest-api/maven-metadata.xml.svg?style=flat-square)
+[![CircleCI](https://img.shields.io/circleci/project/github/saksmt/ktest.svg?style=flat-square)](https://circleci.com/gh/saksmt/ktest) ![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/oss.sonatype.org/content/repositories/releases/run/smt/ktest/ktest-api/maven-metadata.xml.svg?style=flat-square)
 
 kTest is integration/acceptance/system/any other non-unit test oriented modular test framework in Kotlin.
 Inspired by [kotlintest](https://github.com/kotlintest/kotlintest), [specs2](https://github.com/etorreborre/specs2) and martians. 
