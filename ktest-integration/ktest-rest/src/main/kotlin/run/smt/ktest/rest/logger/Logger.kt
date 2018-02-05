@@ -8,5 +8,5 @@ import io.restassured.specification.FilterableRequestSpecification
  * or just one argument of type [com.typesafe.config.Config]
  */
 interface Logger {
-    fun log(request: FilterableRequestSpecification, response: Response)
+    fun log(request: FilterableRequestSpecification): (Response) -> Unit
 }

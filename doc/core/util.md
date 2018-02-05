@@ -93,6 +93,37 @@ fun usage4() {
 }
 ```
 
+### Lambda helpers
+
+Contains some useful and some esoteric functions to work with lambdas
+
+#### Overloaded lambdas
+
+Simple wrappers around plain lambdas to obtain default argument functionality
+
+```kotlin
+import run.smt.ktest.util.lambda.*
+
+fun overloadedUsage() {
+    val myOverloadedLambda: SingleArgumentLambda<String, Int> = { it: String? ->
+        it?.toInt() ?: 0xDEF
+    }.overloaded()
+    
+    val stringToInt = myOverloadedLambda("123")
+    val defaultLambdaValue = myOverloadedLambda()
+    
+    
+    val myLambdaSum: DualArgumentLambda<Int, Int, Int> = { a: Int?, b: Int? ->
+        (a ?: 0) + (b ?: 0)
+    }.overloaded()
+    
+    val sumOfZeroes = myLambdaSum()
+    val sumOfZeroAndOne = myLambdaSum(1)
+    val sumOfZeroAndOne_alternative = myLambdaSum(null, 1)
+    val sumOfOneAndThree = myLambdaSum(1, 3)
+}
+```
+
 ### ADTs/Monads/...
 
 This is far from complete implementations mostly needed by code of kTest itself, so if you really need some ADTs/monads/...
