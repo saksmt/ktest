@@ -15,50 +15,56 @@ class SteppedAllureLogger : Logger {
         private val logger = LoggerFactory.getLogger(SteppedAllureLogger::class.java)
     }
 
-    override fun log(request: FilterableRequestSpecification, response: Response) {
-        "HTTP ${request.method} ${request.derivedPath} --> ${response.statusLine}" step {
-            "request" step {
-                if (!request.queryParams.isEmpty()) {
-                    attach("query-parameters", request.queryParams.dump(), "application/json")
-                }
-                val contentType = purifyContentType(request.contentType)
-                val requestBody = request.getBody<Any>()
-                val body: Any? = when {
-                    contentType?.equals("application/json", ignoreCase = true) == true -> when (requestBody) {
-                        is String -> beautify(requestBody)
-                        is ByteArray -> beautify(requestBody.toString(charset = Charsets.UTF_8))
-                        else -> requestBody
-                    }
+    override fun log(request: FilterableRequestSpecification): (Response) -> Unit {
+        val requestName = "HTTP ${request.method} ${request.derivedPath} -->"
+        val finishWrappingStep = step("$requestName ???")
+
+        "request" step {
+            if (!request.queryParams.isEmpty()) {
+                attach("query-parameters", request.queryParams.dump(), "application/json")
+            }
+            val contentType = purifyContentType(request.contentType)
+            val requestBody = request.getBody<Any>()
+            val body: Any? = when {
+                contentType?.equals("application/json", ignoreCase = true) == true -> when (requestBody) {
+                    is String -> beautify(requestBody)
+                    is ByteArray -> beautify(requestBody.toString(charset = Charsets.UTF_8))
                     else -> requestBody
                 }
-                val bodyString = requestBody?.let { body as? String ?: body.dump() }
-
-                body?.let { attach("body", it,  contentType ?: "application/json") }
-
-                attach("headers", request.headersString, "text/plain")
-                attach("cURL", "curl -X ${request.method} '${request.uri}' ${curlHeaders(request)} ${curlBody(bodyString)}")
+                else -> requestBody
             }
+            val bodyString = requestBody?.let { body as? String ?: body.dump() }
 
-            "response" step {
-                val contentType = purifyContentType(response.contentType)
-                val bodyAsString = if (contentType?.equals("application/json", ignoreCase = true) == true) {
-                    beautify(response.asString())
-                } else {
-                    response.asString()
-                }
-                attach("body", bodyAsString, contentType ?: "application/json")
-                attach("headers", response.headersString, "text/plain")
+            body?.let { attach("body", it,  contentType ?: "application/json") }
 
-                try {
-                    val developerMessageNode = (bodyAsString deserialize JsonNode::class).path("developerMessage")
-                    if (response.statusCode >= 400 && developerMessageNode is TextNode) {
-                        attach("stacktrace", developerMessageNode.textValue())
-                    }
-                } catch (e: Exception) {
-                    // never mind...
-                }
-            }
+            attach("headers", request.headersString, "text/plain")
+            attach("cURL", "curl -X ${request.method} '${request.uri}' ${curlHeaders(request)} ${curlBody(bodyString)}")
         }
+
+        return { response ->
+                "response" step {
+                    val contentType = purifyContentType(response.contentType)
+                    val bodyAsString = if (contentType?.equals("application/json", ignoreCase = true) == true) {
+                        beautify(response.asString())
+                    } else {
+                        response.asString()
+                    }
+                    attach("body", bodyAsString, contentType ?: "application/json")
+                    attach("headers", response.headersString, "text/plain")
+
+                    try {
+                        val developerMessageNode = (bodyAsString deserialize JsonNode::class).path("developerMessage")
+                        if (response.statusCode >= 400 && developerMessageNode is TextNode) {
+                            attach("stacktrace", developerMessageNode.textValue())
+                        }
+                    } catch (e: Exception) {
+                        // never mind...
+                    }
+                }
+
+                finishWrappingStep(null, "$requestName ${response.statusLine}")
+            }
+
     }
 
     private fun curlBody(bodyString: String?) =

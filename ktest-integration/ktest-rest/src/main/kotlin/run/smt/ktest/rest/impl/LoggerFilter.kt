@@ -21,10 +21,18 @@ internal class LoggerFilter(private val logger: Logger) : Filter {
     }
 
     override fun filter(requestSpec: FilterableRequestSpecification, responseSpec: FilterableResponseSpecification, ctx: FilterContext): Response {
+        val emptyConsumer: (Response) -> Unit = {}
+        val responseConsumer: (Response) -> Unit = try {
+            logger.log(requestSpec)
+        } catch (e: Exception) {
+            log.error("REST logger failed due to: ", e)
+            emptyConsumer
+        }
+
         val response = ctx.next(requestSpec, responseSpec)
 
         try {
-            logger.log(requestSpec, response)
+            responseConsumer(response)
         } catch (e: Exception) {
             log.error("REST logger failed due to: ", e)
         }
