@@ -6,6 +6,9 @@ def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? upload
         name project.description
         packaging 'jar'
         url project.url
+        if (project.hasProperty('fullDescription')) {
+            description fullDescription
+        }
 
         scm {
             connection "scm:git:${project.url}"

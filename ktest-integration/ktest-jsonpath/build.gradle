@@ -1,4 +1,5 @@
 description = 'kTest :: Integration :: JSONPath'
+ext.fullDescription = 'kTest JSONPath integration + subtree DSL'
 
 dependencies {
     compile project(':ktest-core:ktest-util')

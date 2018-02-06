@@ -1,4 +1,5 @@
 description = 'kTest :: Integration :: Jackson'
+ext.fullDescription = 'kTest Jackson integration + type safe type DSL'
 
 dependencies {
     compile project(':ktest-core:ktest-util')

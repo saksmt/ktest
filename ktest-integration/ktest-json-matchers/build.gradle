@@ -1,4 +1,5 @@
 description = 'kTest :: Integration :: JSON Matchers'
+ext.fullDescription = 'kTest JSON matchers'
 
 dependencies {
     compile project(':ktest-core:ktest-util')

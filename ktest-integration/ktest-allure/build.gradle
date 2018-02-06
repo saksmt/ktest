@@ -1,4 +1,5 @@
 description = 'kTest :: Integration :: Allure'
+ext.fullDescription = 'Integration layer between Allure and kTest'
 
 dependencies {
     compile project(':ktest-core:ktest-util')

@@ -1,4 +1,5 @@
 description = 'kTest :: Runner :: JUnit4'
+ext.fullDescription = 'JUnit4 runner for kTest'
 
 dependencies {
     compile project(':ktest-core:ktest-util')
