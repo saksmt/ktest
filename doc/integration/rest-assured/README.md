@@ -1,4 +1,4 @@
-# [kTest](..) :: [Integration](../README.md) :: RestAssured
+# [kTest](../..) :: [Integration](../README.md) :: RestAssured
 
 Provides integration layer between Kotlin brilliant typesafe DSL and excellent RESTAssured 
 testing library with kTest integration in mind

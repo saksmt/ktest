@@ -1,4 +1,4 @@
-# [kTest](..) :: [Integration](../README.md) :: [RestAssured](README.md) :: Core Support
+# [kTest](../..) :: [Integration](../README.md) :: [RestAssured](README.md) :: Core Support
 
 ## Download
 
@@ -220,4 +220,92 @@ For reverse effect:
 ```hocon
 rest.base-url = "http://url-of-my-gateway-server"
 url.backend = ${urls.gateway}
+```
+
+### Advanced usage
+
+#### Writing custom Logger
+
+```kotlin
+import run.smt.ktest.rest.logger.Logger
+import io.restassured.response.Response
+import io.restassured.specification.FilterableRequestSpecification
+
+class MySuperLogger : Logger {
+    override fun log(request: FilterableRequestSpecification): (Response) -> Unit {
+        println(request) // my super-duper logging of request
+        return { response ->
+            println(response) // my super-duper logging of response
+        }
+    }
+}
+```
+
+#### Writing custom authorization adapter
+
+```kotlin
+import run.smt.ktest.rest.authorization.AuthorizationAdapter
+import run.smt.ktest.rest.authorization.getRestLogger
+import run.smt.ktest.rest.api.RequestBuilder
+import run.smt.ktest.rest.api.RequestElement
+import run.smt.ktest.config.get
+import com.typesafe.config.Config
+import kotlin.properties.Delegates
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.builder.ResponseSpecBuilder
+import io.restassured.config.LogConfig
+import io.restassured.config.RestAssuredConfig
+import io.restassured.http.ContentType
+import io.restassured.specification.RequestSpecification
+import io.restassured.internal.TestSpecificationImpl
+
+class MyAuthAdapter : AuthorizationAdapter {
+    var config : Config by Delegates.notNull()
+    
+    override fun setup(config: Config) {
+        this.config = config
+    }
+    
+    override fun RequestBuilder.enrichRequest(request: Sequence<RequestElement>) : Sequence<RequestElement> {
+        return sequenceOf(header("token", obtainSomeToken())) + request
+    }
+    
+    private fun obtainSomeToken(): String {
+        return makeRequestForToken(TestSpecificationImpl(
+            RequestSpecBuilder()
+                .setConfig(RestAssuredConfig.config().logConfig(
+                    LogConfig.logConfig()
+                        .enableLoggingOfRequestAndResponseIfValidationFails()
+                        .enablePrettyPrinting(true)
+                ))
+                .addFilter(getRestLogger(config["logger"]))
+                .setContentType(ContentType.JSON)
+                .setBaseUri(config.getString("my-authorization-host"))
+                .build(),
+            ResponseSpecBuilder().build()
+        ).requestSpecification)
+    }
+    
+    private fun makeRequestForToken(restAssured: RequestSpecification): String = TODO("need to write authorization request logic")
+}
+```
+
+(defaults.conf)
+```HOCON
+authorization.adapters.my-auth = MyAuthAdapter
+```
+
+#### Hacking default configuration
+
+You may want to setup default configuration for all context that you use:
+
+```HOCON
+___DEFAULTS___ {
+    rest {
+        logger {
+            class = MySupperLogger // from example above
+        }
+        authorization.adapters.my-auth = MyAuthAdapter // from example above
+    }
+}
 ```
