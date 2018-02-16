@@ -1,4 +1,4 @@
-# [kTest](..) :: [Integration](README.md) :: JSONPath
+# [kTest](../README.md) :: [Integration](README.md) :: JSONPath
 
 ## Download
 
