@@ -35,7 +35,7 @@ fun step(name: String, description: String? = null, vararg parameters: Pair<Stri
     allure.startStep(stepUUID, description?.let { result.withDescription(it) } ?: result)
 
     return { e: Throwable?, newName: String? ->
-        if (e == null) {
+        if (e != null) {
             allure.updateStep { it
                 .withStatus(ResultsUtils.getStatus(e).orElse(Status.BROKEN))
                 .withStatusDetails(ResultsUtils.getStatusDetails(e).orElse(null))
