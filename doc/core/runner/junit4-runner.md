@@ -1,4 +1,4 @@
-# [kTest](../..) :: [Core](..) :: [Runner](README.md) :: JUnit 4 Runner
+# [kTest](../../README.md) :: [Core](../README.md) :: [Runner](README.md) :: JUnit 4 Runner
 
 ## Download
 
