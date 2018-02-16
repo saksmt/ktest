@@ -1,4 +1,4 @@
-# [kTest](..) :: [Core](README.md) :: API
+# [kTest](../README.md) :: [Core](README.md) :: API
 
 ## Download
 

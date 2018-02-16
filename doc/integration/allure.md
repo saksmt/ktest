@@ -1,4 +1,4 @@
-# [kTest](..) :: [Integration](README.md) :: Allure
+# [kTest](../README.md) :: [Integration](README.md) :: Allure
 
 ## Download
 
