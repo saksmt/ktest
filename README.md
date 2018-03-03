@@ -118,7 +118,7 @@ object MyTest : SimpleSpec({
 })
 ```
 
-### Configuring reporting engine
+### [Configuring reporting engine](doc/integration/allure.md)
 
 *Reporting powered by excellent [Allure](http://allure.qatools.ru)*
 
