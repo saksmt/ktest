@@ -61,13 +61,13 @@ abstract class BaseSpec {
 
     fun SpecBuilder.addAfterEachHook(body: () -> Unit) {
         modify {
-            currentSuite.addInterceptor(Interceptor(before = executeEveryTime(body)))
+            currentSuite.addInterceptor(Interceptor(after = executeEveryTime(body)))
         }
     }
 
     fun SpecBuilder.addBeforeEachHook(body: () -> Unit) {
         modify {
-            currentSuite.addInterceptor(Interceptor(after = executeEveryTime(body)))
+            currentSuite.addInterceptor(Interceptor(before = executeEveryTime(body)))
         }
     }
 
