@@ -46,6 +46,7 @@ def deployer = uploadArchives.repositories.hasProperty('mavenDeployer') ? upload
     pom.project {
         name project.description
         packaging 'pom'
+        description 'kTest parent POM'
 
         url project.url
 

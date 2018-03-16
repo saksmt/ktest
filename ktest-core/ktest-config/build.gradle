@@ -1,4 +1,5 @@
 description = 'KTest :: Config'
+ext.fullDescription = 'Extensions for typesafe config'
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'

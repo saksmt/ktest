@@ -1,4 +1,5 @@
 description = "kTest :: Samples"
+ext.fullDescription = 'kTest samples'
 
 import org.mockserver.mockserver.MockServer
 
