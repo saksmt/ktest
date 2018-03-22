@@ -32,15 +32,19 @@ class SpecExecutor<R: RunnerDescription>(
     }
 
     fun startup() {
-        // noop
+        with(spec) {
+            Internals.initialize {
+                notifier.emitCaseFailure(it, Case(rootSuite, "initialization", rootSuite.inheritedMetaData) {})
+            }
+        }
     }
 
     fun finalize() {
         with(spec) {
-            Internals.closeResources {
+            Internals.finalize {
                 notifier.emitCaseFailure(
                     it,
-                    Case(rootSuite, "close resources", rootSuite.inheritedMetaData) {}
+                    Case(rootSuite, "finalization", rootSuite.inheritedMetaData) {}
                 )
             }
         }
