@@ -9,6 +9,7 @@ import run.smt.ktest.json.matcher.api.ComparisonMismatch
 import run.smt.ktest.json.matcher.api.MatcherConfig
 import run.smt.ktest.json.matcher.api.jsonComparatorFor
 import run.smt.ktest.jsonpath.castTo
+import run.smt.ktest.jsonpath.copy
 import run.smt.ktest.jsonpath.subtree.*
 import run.smt.ktest.util.functional.Either.*
 import run.smt.ktest.util.functional.identity
@@ -18,12 +19,12 @@ abstract class JsonMatcher<T, S: JsonMatcher<T, S>>(private val config: MatcherC
     protected abstract val self: S
 
     infix fun bySubtree(subtreeSpec: SubtreeSpec): S {
-        preProcess = { extractSubtree(it, subtreeSpec) }
+        preProcess = { extractSubtree(it.copy(), subtreeSpec) }
         return self
     }
 
     infix fun afterRemovalOfSubtree(subtreeSpec: SubtreeSpec): S {
-        preProcess = { it.remove(subtreeSpec) }
+        preProcess = { it.copy().remove(subtreeSpec) }
         return self
     }
 
