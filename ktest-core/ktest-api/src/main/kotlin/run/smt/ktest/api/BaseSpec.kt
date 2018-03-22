@@ -6,6 +6,8 @@ import java.util.*
 import run.smt.ktest.util.reflection.a as _a
 import run.smt.ktest.api.metaInfo as buildMetaInfo
 
+typealias Hook = ((AssertionError) -> Unit) -> Unit
+
 abstract class BaseSpec {
 
     private var currentSuite = Suite(javaClass.simpleName, this::class) {}
@@ -22,6 +24,8 @@ abstract class BaseSpec {
         get() = this@BaseSpec.frozen
         set(value) { this@BaseSpec.frozen = value }
 
+    private val initializers = mutableListOf<Hook>()
+    private val finalizers = mutableListOf<Hook>(::closeResources)
     private val closeablesInReverseOrder = LinkedList<AutoCloseable>()
 
     fun <T : AutoCloseable> autoClose(closeable: T): T {
@@ -37,25 +41,27 @@ abstract class BaseSpec {
     fun beforeAll(body: () -> Unit) = SpecBuilder.addBeforeAllHook(body)
     fun afterAll(body: () -> Unit) = SpecBuilder.addAfterAllHook(body)
 
-    fun Internals.closeResources(exceptionHandler: (AssertionError) -> Unit) {
-        closeablesInReverseOrder.forEach {
-            try {
-                it.close()
-            } catch (exception: AssertionError) {
-                exceptionHandler(exception)
-            }
+    fun Internals.finalize(exceptionHandler: (AssertionError) -> Unit) {
+        finalizers.forEach {
+            it(exceptionHandler)
+        }
+    }
+
+    fun Internals.initialize(exceptionHandler: (AssertionError) -> Unit) {
+        initializers.forEach {
+            it(exceptionHandler)
         }
     }
 
     fun SpecBuilder.addBeforeAllHook(body: () -> Unit) {
         modify {
-            currentSuite.addInterceptor(Interceptor(before = executeOnce(body)))
+            initializers += { withAssertionErrorHandling(it, body) }
         }
     }
 
     fun SpecBuilder.addAfterAllHook(body: () -> Unit) {
         modify {
-            currentSuite.addInterceptor(Interceptor(after = executeOnce(body)))
+            finalizers += { withAssertionErrorHandling(it, body) }
         }
     }
 
@@ -103,5 +109,19 @@ abstract class BaseSpec {
             )
         }
         modifier()
+    }
+
+    private fun withAssertionErrorHandling(exceptionHandler: (AssertionError) -> Unit, action: () -> Unit) {
+        try {
+            action()
+        } catch (e: AssertionError) {
+            exceptionHandler(e)
+        }
+    }
+
+    private fun closeResources(exceptionHandler: (AssertionError) -> Unit) {
+        closeablesInReverseOrder.forEach {
+            withAssertionErrorHandling(exceptionHandler, it::close)
+        }
     }
 }
