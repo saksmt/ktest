@@ -8,6 +8,7 @@ import run.smt.ktest.rest.url.createUrlDsl
 import run.smt.ktest.resttest.createRestTestDSL
 
 class Url(config: Config) : UrlProvider {
+    val rest: String = config["rest"]
     val ping: String = config["ping"]
     val simple: String = config["simple"]
     val errorHttpCodes: String = config["error-http-codes"]

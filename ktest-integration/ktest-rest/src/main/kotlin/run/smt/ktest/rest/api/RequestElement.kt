@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.JsonNode
 sealed class RequestElement {
     fun flatten(): List<RequestElement> = if (this is CompositeParameter) elements.flatMap { it.flatten() } else listOf(this)
 
-    class Header internal constructor(val name: String, val value: String) : RequestElement()
-    class QueryParameter internal constructor(val name: String, val value: Any?) : RequestElement()
-    class Body internal constructor(val data: Any?) : RequestElement()
-    class PathParameter internal constructor(val name: String, val value: String) : RequestElement()
+    data class Header internal constructor(val name: String, val value: String) : RequestElement()
+    data class QueryParameter internal constructor(val name: String, val value: Any?) : RequestElement()
+    data class Body internal constructor(val data: Any?) : RequestElement()
+    data class PathParameter internal constructor(val name: String, val value: String) : RequestElement()
 
-    internal class CompositeParameter(val elements: List<RequestElement>) : RequestElement()
+    internal data class CompositeParameter(val elements: List<RequestElement>) : RequestElement()
 }
 
 /**
@@ -29,12 +29,14 @@ interface RequestElementBuilder {
     fun queryParam(name: String): RequestElement = queryParam(name, true)
     fun queryParams(params: List<Pair<String, Any?>>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> queryParam(n, v) })
     fun queryParams(params: Map<String, Any?>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> queryParam(n, v) })
+    fun queryParams(vararg params: Pair<String, Any?>): RequestElement = queryParams(params.toList())
 
     fun pathParam(pathParam: Pair<String, Any>): RequestElement = pathParams(listOf(pathParam))
     fun pathParam(name: String, value: String): RequestElement = RequestElement.PathParameter(name, value)
     fun pathParam(name: String, value: Long): RequestElement = RequestElement.PathParameter(name, value.toString())
     fun pathParam(name: String, value: Int): RequestElement = RequestElement.PathParameter(name, value.toString())
     fun pathParams(params: List<Pair<String, Any>>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> genericPathParam(n, v) })
+    fun pathParams(vararg params: Pair<String, Any>): RequestElement = pathParams(params.toList())
     fun pathParams(params: Map<String, Any>): RequestElement = RequestElement.CompositeParameter(params.map { (n, v) -> genericPathParam(n, v) })
 
     fun body(content: Any?): RequestElement = if (content is JsonNode) body(content.toString()) else RequestElement.Body(content)

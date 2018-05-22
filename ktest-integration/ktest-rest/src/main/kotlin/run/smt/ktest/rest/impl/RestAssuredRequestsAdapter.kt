@@ -34,6 +34,9 @@ internal class RestAssuredRequestsAdapter(
         val queryParameters = flattenedParameters
             .filterIsInstance<RequestElement.QueryParameter>()
             .groupBy({ it.name }, { it.value })
+        val pathParameters = flattenedParameters
+            .filterIsInstance<RequestElement.PathParameter>()
+            .associate { it.name to it.value }
         val body = flattenedParameters.filterIsInstance<RequestElement.Body>().firstOrNull()
 
         // Build new rest assured request specification
@@ -51,6 +54,7 @@ internal class RestAssuredRequestsAdapter(
             if (body != null) {
                 setBody(body.data)
             }
+            addPathParams(pathParameters)
         }
 
         val spec = TestSpecificationImpl(
