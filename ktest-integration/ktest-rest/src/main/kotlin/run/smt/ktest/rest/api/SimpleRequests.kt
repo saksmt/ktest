@@ -34,9 +34,6 @@ private inline fun SimpleRequests.request(parameters: Array<out RequestElement>,
         .query().andReturn()
 }
 
-private fun extractPathParams(parameters: Array<out RequestElement>): Map<String, String> =
-    parameters.asSequence().filterIsInstance<RequestElement.PathParameter>().associate { it.name to it.value }
-
 /**
  * Part of REST DSL for performing simple requests with automatic deserialization to requested type + check for status code
  * to be successful
@@ -45,49 +42,49 @@ interface SimpleRequests : Deserialization, ComplexQueriesBuilder {
     // Plain reflection responses
 
     fun <T : Any> String.GET(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { get(this@GET, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { get(this@GET) }
 
     fun <T : Any> String.POST(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { post(this@POST, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { post(this@POST) }
 
     fun <T : Any> String.PUT(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { put(this@PUT, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { put(this@PUT) }
 
     fun <T : Any> String.HEAD(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { head(this@HEAD, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { head(this@HEAD) }
 
     fun <T : Any> String.OPTIONS(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { options(this@OPTIONS, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { options(this@OPTIONS) }
 
     fun <T : Any> String.PATCH(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { patch(this@PATCH, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { patch(this@PATCH) }
 
     fun <T : Any> String.DELETE(clazz: KClass<T>, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { delete(this@DELETE, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { delete(this@DELETE) }
 
 
     // Jackson's JavaTypes
 
     fun <T : Any> String.GET(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { get(this@GET, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { get(this@GET) }
 
     fun <T : Any> String.POST(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { post(this@POST, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { post(this@POST) }
 
     fun <T : Any> String.PUT(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { put(this@PUT, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { put(this@PUT) }
 
     fun <T : Any> String.HEAD(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { head(this@HEAD, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { head(this@HEAD) }
 
     fun <T : Any> String.OPTIONS(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { options(this@OPTIONS, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { options(this@OPTIONS) }
 
     fun <T : Any> String.PATCH(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { patch(this@PATCH, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { patch(this@PATCH) }
 
     fun <T : Any> String.DELETE(clazz: JavaType, vararg parameters: RequestElement, ignoreStatusCode: Boolean = false): T =
-        request(clazz, parameters, ignoreStatusCode) { delete(this@DELETE, extractPathParams(parameters)) }
+        request(clazz, parameters, ignoreStatusCode) { delete(this@DELETE) }
 
 
     // kTest JSON TypeDSLs

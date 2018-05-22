@@ -8,11 +8,16 @@ import org.junit.runner.RunWith
 import org.mockserver.model.Header
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
+import resttest.url
+import run.smt.ktest.allure.description
+import run.smt.ktest.allure.issue
 import run.smt.ktest.json.deserialize
 import run.smt.ktest.json.type
 import run.smt.ktest.rest.rest
 import run.smt.ktest.runner.junit4.KTestJUnitRunner
 import run.smt.ktest.specs.AllureSpec
+import run.smt.ktest.util.dsl.execute
+import run.smt.ktest.util.dsl.using
 import java.io.InputStream
 
 data class SamplePojo(val hello: String)
@@ -83,6 +88,18 @@ object SimpleRestRequestsSpec : AllureSpec({
                 assertThat(statusCode, equalTo(418))
                 assertThat(response, equalTo(mapOf("hello" to "world")))
             }
+
+            case("GET with mixed untyped path parameters", metaInfo = {
+                issue("#62")
+                description("There was a bug related to missing flattening of path parameters in SimpleRequests")
+            }) {
+                val result: SamplePojo = rest {
+                    using(url) {  rest / simple / param("firstParam") / param("secondParam") } execute {
+                        GET(pathParam("firstParam" to "pathParamValue1"), pathParams("secondParam" to 2))
+                    }
+                }
+                assertThat(result, equalTo(SamplePojo("world")))
+            }
         }
     }
 
@@ -126,5 +143,9 @@ object SimpleRestRequestsSpec : AllureSpec({
         mockServer.`when`(
             HttpRequest.request("/rest/simple").withMethod("GET").withQueryStringParameter("fail", "true")
         ).respond(HttpResponse.response(body).withHeader(contentType).withStatusCode(418))
+
+        mockServer.`when`(
+            HttpRequest.request("/rest/simple/pathParamValue1/2").withMethod("GET")
+        ).respond(HttpResponse.response(body).withHeader(contentType))
     }
 })
