@@ -21,6 +21,10 @@
 
 Provides some DSL for Jackson JSON library
 
+There are 2 ways to use this DSL: either by explicitly specifying what mapper
+to use or just using globally configured mapper. In samples below (until explicitly specified)
+used second method is used which also works with explicit specification of mapper.
+
 ### Default ObjectMapper
 
 ```kotlin
@@ -120,4 +124,18 @@ fun usage6(myData: JsonNode) {
     // if you added json-path as dependency to your project
     val mappedToJsonPath = myData mapTo DocumentContext::class
 }
+```
+
+### Using custom mapper
+
+```kotlin
+import com.fasterxml.jackson.databind.ObjectMapper
+import run.smt.ktest.json.with
+
+fun usage7(myMapper: ObjectMapper) {
+    with(myMapper) {
+        "{}" deserialize { map<String, String>() }
+    }
+}
+
 ```
