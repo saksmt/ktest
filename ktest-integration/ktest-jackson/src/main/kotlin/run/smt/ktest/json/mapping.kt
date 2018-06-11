@@ -8,10 +8,21 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jayway.jsonpath.*
 import run.smt.ktest.util.reflection.canBeAssignedTo
 import run.smt.ktest.util.resource.load
+import run.smt.ktest.config.config
+import run.smt.ktest.config.get
+import run.smt.ktest.util.loader.load
+import run.smt.ktest.util.functional.Try.*
 import java.io.InputStream
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
+
+private fun createMapper(): ObjectMapper {
+    val configurerClasses: List<String> = config["json.configurers"]
+    return configurerClasses
+        .map { load<JsonConfigurer>(it).fold { throw it } }
+        .fold(ObjectMapper()) { acc, v -> v(acc) }
+}
 
 val mapper by lazy { jacksonObjectMapper() }
 

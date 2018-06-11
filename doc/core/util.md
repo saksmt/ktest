@@ -151,12 +151,14 @@ fun usage5() {
     fun applyToTry(attempt: Try<Int>): String {
         return attempt
             .map { it + 1 }
+            .filter(throwIfFailed = { Exception(it.toString()) }) { it > 0 }
             .mapTry { someCodeThatMayThrow(it) }.flatMap { success(it) }
             .value ?: "Exception occurred"
     }
     
     val myFirstTryResult = applyToTry(myTry)
     val myOtherTryResult = applyToTry(myOtherTry)
+    val extractionSample = myTry.fold(ifError = { throw it })
 }
 
 ```
@@ -263,3 +265,65 @@ fun usage9() {
     }
 }
 ```
+
+### Injection/Dynamic class loading
+
+This methods considered internal-only and backward compatibility is not actually
+supported, but you may need this if you want to write some huge extension, new integration
+or runner.
+
+```kotlin
+import run.smt.ktest.util.loader.*
+
+interface MyPlugin
+
+class SomeClientImplementationOfMyPlugin(someDependency: String) : MyPlugin
+object SomeOtherClientImplementation : MyPlugin
+
+fun usage10() {
+    val loadedExtensions = listOf( // you may want to extract this values from config
+        "SomeClientImplementationOfMyPlugin",
+        "SomeOtherClientImplementation"
+    ).map { load<MyPlugin>(it, InjectionMode.ALLOW_EXTRA_ARGS, "this is some dependency") }
+}
+```
+
+You can also use injection without loading by class name:
+
+```kotlin
+import run.smt.ktest.util.loader.*
+
+interface MyExtension
+
+class SomeExtensionImpl(injectedValue: String) : MyExtension
+
+fun usage11() {
+    val instantiated = instantiate<MyExtension>("injected")(SomeExtensionImpl::class)
+}
+```
+
+And you can load class without instantiation:
+
+```kotlin
+import run.smt.ktest.util.loader.*
+
+interface MyExtensionPlugin
+
+class SomeExtensionPlugin : MyExtensionPlugin
+
+fun usage12() {
+    val extensionClass = loadClass<MyExtensionPlugin>("SomeExtensionPlugin")
+}
+```
+
+#### Note about injection options
+
+There are 2 possible ways to inject your dependencies:
+
+1. `STRICT` - it means formal arguments in constructor can not ignore provided injections
+  i.e. if you provided 3 arguments - client code MUST have 3 arguments in constructor
+2. `ALLOW_EXTRA_ARGS` - it means that client code may ignore provided injections
+  i.e. if you provide 3 arguments - client code must have a constructor with 3 or less arguments of same types
+
+Note that both varargs and optional arguments are **not** supported, but overloaded constructors are. Also if client code decided to
+declare an object that should be loaded it is also supported regardless of `InjectionMode`
