@@ -139,3 +139,25 @@ fun usage7(myMapper: ObjectMapper) {
 }
 
 ```
+
+### Configuring global mapper
+
+1. Implement `run.smt.ktest.json.JsonConfigurer`
+2. Register it in configuration at path `json.configurers`
+3. PROFIT
+
+```kotlin
+import run.smt.ktest.json.JsonConfigurer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.DeserializationFeature
+
+object MyConfigurer : JsonConfigurer {
+    override fun invoke(mapper: ObjectMapper): ObjectMapper {
+        return mapper.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+    }
+}
+```
+
+```hocon
+json.configurers = ["MyConfigurer"]
+```
