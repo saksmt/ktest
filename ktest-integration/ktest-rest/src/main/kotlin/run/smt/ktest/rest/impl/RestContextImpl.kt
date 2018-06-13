@@ -6,6 +6,8 @@ import run.smt.ktest.config.get
 import run.smt.ktest.rest.api.RequestBuilder
 import run.smt.ktest.rest.api.RestContext
 import run.smt.ktest.rest.authorization.AuthorizationAdapter
+import run.smt.ktest.util.functional.Try.fold
+import run.smt.ktest.util.loader.load
 
 class RestContextImpl(private val config: Config) : RestContext {
     private val baseUrl: String = config["base-url"]
@@ -15,16 +17,14 @@ class RestContextImpl(private val config: Config) : RestContext {
 
     private fun createAuthorizationAdapter(): AuthorizationAdapter {
         val adapterName: String = config["authorization.adapter"]
-        @Suppress("UNCHECKED_CAST")
-        val adapterClass: Class<AuthorizationAdapter> = Class.forName(
-            if (config.hasPath("authorization.adapters.$adapterName")) {
-                config["authorization.adapters.$adapterName"]
-            } else {
-                adapterName
-            }
-        ) as Class<AuthorizationAdapter>
-        val result = adapterClass.newInstance()
-        result.setup(config)
+        val adapterClassName: String = if (config.hasPath("authorization.adapters.$adapterName")) {
+            config["authorization.adapters.$adapterName"]
+        } else {
+            adapterName
+        }
+        val result = load<AuthorizationAdapter>(adapterClassName)
+            .fold { throw it }
+        result.setup(config) // todo: replace with constructor injection
         return result
     }
 

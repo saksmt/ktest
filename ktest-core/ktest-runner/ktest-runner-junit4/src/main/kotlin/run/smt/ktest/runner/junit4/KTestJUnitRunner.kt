@@ -8,6 +8,8 @@ import run.smt.ktest.api.*
 import run.smt.ktest.api.internal.ExecutableCase
 import run.smt.ktest.api.internal.InitializationMode
 import run.smt.ktest.api.internal.SpecExecutor
+import run.smt.ktest.util.functional.Try.fold
+import run.smt.ktest.util.loader.loadClass
 import run.smt.ktest.util.reflection.a
 
 internal class JUnit4RunnerDescription : RunnerDescription {
@@ -74,7 +76,7 @@ internal fun MetaData.collectCategories(): Set<Annotation> {
     val categories = asSequence()
         .filterIsInstance<CategoryProperty>()
         .map { it.value }
-        .mapNotNull { try { Class.forName(it) } catch (e: Exception) { null } }
+        .mapNotNull { loadClass<Annotation>(it).value }
         .toSet()
 
     return if (categories.isEmpty()) { emptySet() } else {

@@ -2,6 +2,7 @@ package run.smt.ktest.api.internal
 
 import run.smt.ktest.api.*
 import run.smt.ktest.api.lifecycle.Lifecycle
+import run.smt.ktest.util.loader.instantiate
 
 enum class InitializationMode {
     EAGER, LAZY
@@ -12,7 +13,7 @@ class SpecExecutor<R: RunnerDescription>(
     initializationMode: InitializationMode,
     runnerDescription: R
 ) {
-    private val spec = instantiateSpec(specClass)
+    private val spec = instantiate<BaseSpec>()(specClass.kotlin)
 
     val rootSuite by lazy { with(spec) { Internals.currentSuite.also { initialize(it) } } }
     private val notifier by lazy { Lifecycle.createNotifierFor(spec) }
@@ -59,9 +60,5 @@ class SpecExecutor<R: RunnerDescription>(
             })
         }
         suite.childSuites.forEach(this::initialize)
-    }
-
-    private fun instantiateSpec(specClass: Class<out BaseSpec>): BaseSpec {
-        return specClass.kotlin.objectInstance ?: specClass.newInstance()
     }
 }

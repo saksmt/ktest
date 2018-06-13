@@ -3,6 +3,7 @@ ext.fullDescription = 'kTest Jackson integration + type safe type DSL'
 
 dependencies {
     compile project(':ktest-core:ktest-util')
+    compile project(':ktest-core:ktest-config')
 
     compile 'com.fasterxml.jackson.core:jackson-core'
     compile 'com.fasterxml.jackson.core:jackson-databind'
