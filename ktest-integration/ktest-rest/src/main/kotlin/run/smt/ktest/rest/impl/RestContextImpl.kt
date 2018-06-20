@@ -9,6 +9,8 @@ import run.smt.ktest.rest.authorization.AuthorizationAdapter
 
 class RestContextImpl(private val config: Config) : RestContext {
     private val baseUrl: String = config["base-url"]
+    private val socketTimeout: Int = config["socket-timeout"]
+    private val connectTimeout: Int = config["connect-timeout"]
 
     private val authorizationAdapter: AuthorizationAdapter by lazy(this::createAuthorizationAdapter)
     private val logger: Filter by lazy { getLogger(config["logger"]) }
@@ -29,6 +31,6 @@ class RestContextImpl(private val config: Config) : RestContext {
     }
 
     override operator fun <T> invoke(action: RequestBuilder.() -> T): T {
-        return RestAssuredRequestsAdapter(baseUrl, authorizationAdapter, logger).action()
+        return RestAssuredRequestsAdapter(baseUrl, authorizationAdapter, logger, socketTimeout, connectTimeout).action()
     }
 }
