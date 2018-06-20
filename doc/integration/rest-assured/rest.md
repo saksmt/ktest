@@ -28,8 +28,8 @@ rest { # there you describe configuration for default rest context
 
   # base url which will be prefixed for every request
   base-url = "http://myhost:port/path"
-  socketTimeout = 30000 #Socket timeout in milliseconds (optional)
-  connectTimeout = 15000 #Connection timeout in milliseconds (optional)
+  socket-timeout = 30000 #Socket timeout in milliseconds (optional)
+  connect-timeout = 15000 #Connection timeout in milliseconds (optional)
   
   authorization.adapter = noop # optional, defaults to "noop", you can implement `AuthorizationAdapter` and place FQCN here
                                # there is also an noop authorization adapter

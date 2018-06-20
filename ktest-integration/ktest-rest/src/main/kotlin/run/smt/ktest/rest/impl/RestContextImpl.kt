@@ -11,8 +11,8 @@ import run.smt.ktest.util.loader.load
 
 class RestContextImpl(private val config: Config) : RestContext {
     private val baseUrl: String = config["base-url"]
-    private val socketTimeout: Int = config["socketTimeout"]
-    private val connectTimeout: Int = config["connectTimeout"]
+    private val socketTimeout: Int = config["socket-timeout"]
+    private val connectTimeout: Int = config["connect-timeout"]
 
     private val authorizationAdapter: AuthorizationAdapter by lazy(this::createAuthorizationAdapter)
     private val logger: Filter by lazy { getLogger(config["logger"]) }
