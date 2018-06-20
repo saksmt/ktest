@@ -6,11 +6,12 @@ import run.smt.ktest.config.get
 import run.smt.ktest.rest.api.RequestBuilder
 import run.smt.ktest.rest.api.RestContext
 import run.smt.ktest.rest.authorization.AuthorizationAdapter
+import java.util.concurrent.TimeUnit
 
 class RestContextImpl(private val config: Config) : RestContext {
     private val baseUrl: String = config["base-url"]
-    private val socketTimeout: Int = config["socket-timeout"]
-    private val connectTimeout: Int = config["connect-timeout"]
+    private val socketTimeout: Int = config.getDuration("socket-timeout", TimeUnit.MILLISECONDS).toInt()
+    private val connectTimeout: Int = config.getDuration("connect-timeout", TimeUnit.MILLISECONDS).toInt()
 
     private val authorizationAdapter: AuthorizationAdapter by lazy(this::createAuthorizationAdapter)
     private val logger: Filter by lazy { getLogger(config["logger"]) }
