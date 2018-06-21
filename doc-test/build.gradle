@@ -225,7 +225,14 @@ List<File> resolveSourceDirs(String fullDocName) {
 }
 
 String getFullDocName(File docFile) {
-    return docFile.name.take(docFile.name.lastIndexOf('.'))
+    def fullDocName = docFile.getAbsolutePath().replaceFirst(docDir.absolutePath.replace("\\", "\\\\"), "")
+    if (fullDocName.endsWith(".md")) {
+        fullDocName = fullDocName.substring(0, fullDocName.length() - 3)
+    }
+    if (fullDocName.startsWith('/') || fullDocName.startsWith("\\")) {
+        fullDocName = fullDocName.drop(1).toString()
+    }
+    return fullDocName
 }
 
 fileTree(docDir).findAll {
