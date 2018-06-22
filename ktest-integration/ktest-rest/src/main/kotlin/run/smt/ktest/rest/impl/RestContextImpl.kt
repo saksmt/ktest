@@ -8,9 +8,12 @@ import run.smt.ktest.rest.api.RestContext
 import run.smt.ktest.rest.authorization.AuthorizationAdapter
 import run.smt.ktest.util.functional.Try.fold
 import run.smt.ktest.util.loader.load
+import java.util.concurrent.TimeUnit
 
 class RestContextImpl(private val config: Config) : RestContext {
     private val baseUrl: String = config["base-url"]
+    private val socketTimeout: Int = config.getDuration("socket-timeout", TimeUnit.MILLISECONDS).toInt()
+    private val connectTimeout: Int = config.getDuration("connect-timeout", TimeUnit.MILLISECONDS).toInt()
 
     private val authorizationAdapter: AuthorizationAdapter by lazy(this::createAuthorizationAdapter)
     private val logger: Filter by lazy { getLogger(config["logger"]) }
@@ -29,6 +32,6 @@ class RestContextImpl(private val config: Config) : RestContext {
     }
 
     override operator fun <T> invoke(action: RequestBuilder.() -> T): T {
-        return RestAssuredRequestsAdapter(baseUrl, authorizationAdapter, logger).action()
+        return RestAssuredRequestsAdapter(baseUrl, authorizationAdapter, logger, socketTimeout, connectTimeout).action()
     }
 }

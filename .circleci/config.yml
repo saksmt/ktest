@@ -97,7 +97,7 @@ workflows:
             tags: { only: /^v.*/ }
       - publish_snapshot:
           requires: [ build ]
-          filters: { branches: { only: develop } }
+          filters: { branches: { only: '/(([0-9x]+\.?){0,3}\/)?develop/' } }
       - publish_release:
           requires: [ build ]
           filters:

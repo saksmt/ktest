@@ -3,12 +3,14 @@ package run.smt.ktest.rest.impl
 import io.restassured.RestAssured.config
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.builder.ResponseSpecBuilder
+import io.restassured.config.HttpClientConfig
 import io.restassured.config.LogConfig.logConfig
 import io.restassured.filter.Filter
 import io.restassured.http.ContentType
 import io.restassured.internal.TestSpecificationImpl
 import io.restassured.parsing.Parser
 import io.restassured.specification.RequestSpecification
+import org.apache.http.params.CoreConnectionPNames
 import run.smt.ktest.rest.api.RequestBuilder
 import run.smt.ktest.rest.api.RequestElement
 import run.smt.ktest.rest.authorization.AuthorizationAdapter
@@ -19,7 +21,9 @@ import run.smt.ktest.rest.authorization.AuthorizationAdapter
 internal class RestAssuredRequestsAdapter(
     private val baseUrl: String,
     private val authorizationAdapter: AuthorizationAdapter,
-    private val logger: Filter
+    private val logger: Filter,
+    private val socketTimeout: Int,
+    private val connectTimeout: Int
 ) : RequestBuilder() {
     override var debug: Boolean = false
 
@@ -55,6 +59,9 @@ internal class RestAssuredRequestsAdapter(
                 setBody(body.data)
             }
             addPathParams(pathParameters)
+            setConfig(config().httpClient(HttpClientConfig.httpClientConfig()
+                .setParam(CoreConnectionPNames.CONNECTION_TIMEOUT, connectTimeout)
+                .setParam(CoreConnectionPNames.SO_TIMEOUT, socketTimeout)))
         }
 
         val spec = TestSpecificationImpl(
