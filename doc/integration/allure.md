@@ -138,5 +138,25 @@ class MySpec2 : AllureSpec({
             }
         }
     }
+    
+    // if you hate ladders of code like me, you can use something like this:
+    
+    val suite = epic("My epic") + feature("feature")
+    
+    suite(metaInfo = {
+        // you can also provide meta info
+    }) {
+        story("my story") { // you can nest not defined parts!
+            case("my case") {
+                // test
+            }
+        }
+        
+        epic("I want this code to be in another epic") { // end even override!
+            (story("some story") + case("case")) { // and even such madness is OK!
+                // test body
+            }
+        }
+    }
 })
 ```
