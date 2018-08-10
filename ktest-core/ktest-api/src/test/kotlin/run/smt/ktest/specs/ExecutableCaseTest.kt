@@ -13,8 +13,9 @@ import kotlin.system.measureTimeMillis
 class ExecutableCaseTest {
     @Test
     fun `test should respect timeout`() {
+        val timeout: Long = 50
         val aTest = Case(Suite("", ExecutableCaseTest::class) {}, "", metaData = metaInfo {
-            timeout(Duration.ofMillis(50))
+            timeout(Duration.ofMillis(timeout))
         }) {
             Thread.sleep(30_000)
         }
@@ -24,7 +25,8 @@ class ExecutableCaseTest {
             executableCase.execute()
         }
 
-        Assert.assertTrue("Check that test took less than 200ms (100ms was timeout), test took: $testTook", testTook < 100)
+        val allowedTimeout = 150
+        Assert.assertTrue("Check that test took less than $allowedTimeout ms (timeout was: $timeout ms), test took: $testTook ms", testTook < allowedTimeout)
 
     }
 }
