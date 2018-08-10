@@ -8,4 +8,13 @@ dependencies {
     compile 'org.slf4j:slf4j-api'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+
+    testCompile 'junit:junit'
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

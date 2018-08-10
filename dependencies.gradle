@@ -4,6 +4,7 @@ dependencyManagement {
 
         dependency "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
         dependency "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        dependency "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions['coroutines']}"
 
         // TypeSafe Config
 

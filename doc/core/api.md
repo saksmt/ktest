@@ -148,6 +148,12 @@ object MySpec7 : BehaviorSpec({
 
 There is also similar way to define metadata for other specs, just look into signatures! :)
 
+### Note about test timeouts
+
+There are two possible ways to setup test timeout:
+1. Through config `test.timeout = 20 seconds`, this will have global effect on all tests
+2. Per test/suite through metadata method `timeout`: `timeout(Duration.ofSeconds(20))`
+
 ## Table testing
 
 Imagine you have some scenario of test that should be used with different test data. There is a solution for such issues:
