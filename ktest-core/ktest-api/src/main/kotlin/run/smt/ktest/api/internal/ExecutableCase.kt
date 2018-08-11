@@ -14,6 +14,10 @@ private enum class TestRunResult {
     SUCCEED, FAILED, SKIPPED
 }
 
+
+/**
+ * Purpose of this class is to run specified case with its options providing notifications for lifecycle
+ */
 class ExecutableCase internal constructor(val case: Case, private val notifier: LifecycleNotifier) {
     fun execute() {
         val interceptors = case.suite.inheritedInterceptors
@@ -40,34 +44,10 @@ class ExecutableCase internal constructor(val case: Case, private val notifier: 
         }
     }
 
-    private fun runCase(
-        start: (Case) -> Unit,
-        success: (Case) -> Unit,
-        failure: (Throwable, Case) -> Unit,
-        finish: (Case) -> Unit,
-        skip: (Throwable, Case) -> Unit,
-        interceptors: List<Interceptor>
-    ): TestRunResult {
-        try {
-            interceptors.execBefore()
-        } catch (e: Throwable) {
-            skip(e, case)
-            return TestRunResult.SKIPPED
-        }
-        start(case)
-        val result = try {
-            case.body()
-            interceptors.execAfter()
-            success(case)
-            TestRunResult.SUCCEED
-        } catch (e: Throwable) {
-            failure(e, case)
-            TestRunResult.FAILED
-        }
-        finish(case)
-        return result
-    }
-
+    /**
+     * Runs case asynchronously with timeout
+     * Todo: maybe it would be better to replace timeout as long with duration, or even write custom Span class
+     */
     private suspend fun runCase(ec: CoroutineContext,
                                 start: (Case) -> Unit,
                                 success: (Case) -> Unit,
@@ -132,6 +112,9 @@ class ExecutableCase internal constructor(val case: Case, private val notifier: 
         return TestRunResult.SUCCEED
     }
 
+    /**
+     * Runs all invocations of test asynchronously
+     */
     private fun runAll(interceptors: List<Interceptor>) {
         val ec = createExecutor().asCoroutineDispatcher()
         val results = (1..case.invocations)
@@ -159,6 +142,9 @@ class ExecutableCase internal constructor(val case: Case, private val notifier: 
         } }
     }
 
+    /**
+     * Creates executor service base on case parameters
+     */
     private fun createExecutor(): ExecutorService {
         return if (case.threads < 2) {
             Executors.newSingleThreadExecutor()
@@ -167,6 +153,9 @@ class ExecutableCase internal constructor(val case: Case, private val notifier: 
         }
     }
 
+    /**
+     * Generates user friendly exception for timeout cancellation from coroutines
+     */
     private fun timeoutException(e: TimeoutCancellationException, originalTimeout: Long, timeout: Long, phase: String): TimeoutException {
         val ex = TimeoutException("Test aborted due to timeout exceeded on phase \"$phase\" with original timeout=${originalTimeout}ms and phase timeout=${timeout}ms")
         ex.initCause(e)
@@ -175,6 +164,9 @@ class ExecutableCase internal constructor(val case: Case, private val notifier: 
 
     private class PhaseExecutionException(val exception: Throwable) : Exception()
 
+    /**
+     * Wraps async code to execute within timeout on specified EC
+     */
     private suspend fun <R> timedOut(ec: CoroutineContext, timeout: Long, action: suspend () -> R): R {
         val deferred = async(ec) {
             action()

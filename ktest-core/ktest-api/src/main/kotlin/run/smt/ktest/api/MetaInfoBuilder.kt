@@ -9,6 +9,9 @@ import run.smt.ktest.util.reflection.a as _a
 
 typealias MetaInfoDSL = MetaInfoBuilder.() -> Unit
 
+/**
+ * DSL for meta info
+ */
 class MetaInfoBuilder internal constructor() {
     private val metaProperties = mutableSetOf<MetaProperty<*>>()
 
@@ -18,8 +21,14 @@ class MetaInfoBuilder internal constructor() {
         return (processedAnnotations + others).toSet()
     }
 
+    /**
+     * Appends meta property, SPI for custom properties
+     */
     fun Internals.register(property: MetaProperty<*>) { metaProperties += property }
 
+    /**
+     * Builds meta property from annotation definition
+     */
     fun annotation(value: Annotation) = Internals.register(AnnotationBasedProperty(value))
     inline fun <reified A : Annotation> a(value: Any?) = annotation(_a<A>(value))
     inline fun <reified A : Annotation> a(parameters: Map<String, Any>) = annotation(_a<A>(parameters))
@@ -36,9 +45,15 @@ class MetaInfoBuilder internal constructor() {
     fun threads(count: Int) = Internals.register(ThreadsProperty(count))
 }
 
+/**
+ * Builds meta info DSL to meta info
+ */
 fun metaInfo(dsl: MetaInfoDSL) = MetaInfoBuilder().apply(dsl).toMetaProperties()
 
 
+/**
+ * Combines repeatable annotations according to java conventions
+ */
 internal fun normalize(annotations: List<Annotation>): List<Annotation> {
     val (normalizable, alreadyNormalized) = annotations.asSequence()
         .groupBy { it::class }
@@ -53,6 +68,9 @@ internal fun normalize(annotations: List<Annotation>): List<Annotation> {
         }
 }
 
+/**
+ * Combined 2 meta info DSLs
+ */
 operator fun MetaInfoDSL.plus(other: MetaInfoDSL): MetaInfoDSL = {
     this@plus(this)
     other(this)

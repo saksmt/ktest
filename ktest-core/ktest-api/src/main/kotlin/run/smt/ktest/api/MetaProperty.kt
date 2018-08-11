@@ -4,9 +4,15 @@ import java.time.Duration
 
 typealias MetaData = Set<MetaProperty<*>>
 
+/**
+ * Empty metadata
+ */
 fun emptyMetaData(): MetaData = emptySet()
 fun noMetaData() = emptyMetaData()
 
+/**
+ * Tests meta property, parent data representation for all meta property calls in DSL
+ */
 abstract class MetaProperty<out T> {
     abstract val value: T
 }

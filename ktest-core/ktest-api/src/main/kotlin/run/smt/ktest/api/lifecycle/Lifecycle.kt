@@ -11,6 +11,9 @@ import run.smt.ktest.util.functional.Try.recover
 import run.smt.ktest.util.loader.instantiate
 import run.smt.ktest.util.loader.loadClass
 
+/**
+ * Responsible for registration of all [[CaseLifecycleListener]]s
+ */
 object Lifecycle {
     private val log = LoggerFactory.getLogger(Lifecycle::class.java)
 

@@ -6,9 +6,18 @@ import run.smt.ktest.util.functional.Either.right
 import run.smt.ktest.util.functional.Try.Try
 import kotlin.reflect.KClass
 
+/**
+ * Represents suite to be executed with all its children (both cases and other suites)
+ */
 class Suite private constructor(
     val name: String,
+    /**
+     * Parent suite, it must be either other suite or some class
+     */
     val parent: Either<Suite, KClass<*>>,
+    /**
+     * Metadata for suite, will be appended to children metadata
+     */
     val metaData: MetaData = emptySet(),
     initializer: (Suite) -> Unit
 ) {
@@ -50,22 +59,37 @@ class Suite private constructor(
     val inheritedInterceptors: List<Interceptor>
         get() = interceptors + parent.unify({ it.inheritedInterceptors }, { emptyList() })
 
+    /**
+     * Search for class where this suite was defined
+     */
     val testClass : KClass<*> = parent.unify({ it.testClass }, { it })
 
+    /**
+     * Full path to this suite taking into account all its parents
+     */
     val fullPath: List<String> = parent.unify({ it.fullPath }, { emptyList() }) + listOf(name)
 
     val fullName = fullPath.joinToString(".")
 
     fun initialize() = initialization.value.exception
 
+    /**
+     * Add child case
+     */
     fun addCase(case: Case) {
         _childCases += case
     }
 
+    /**
+     * Add child suite
+     */
     fun addSuite(suite: Suite) {
         _childSuites += suite
     }
 
+    /**
+     * Add interceptor (before, after hook)
+     */
     fun addInterceptor(interceptor: Interceptor) {
         _interceptors += interceptor
     }

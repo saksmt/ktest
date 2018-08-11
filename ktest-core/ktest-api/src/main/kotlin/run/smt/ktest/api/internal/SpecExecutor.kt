@@ -4,10 +4,17 @@ import run.smt.ktest.api.*
 import run.smt.ktest.api.lifecycle.Lifecycle
 import run.smt.ktest.util.loader.instantiate
 
+/**
+ * Tells how spec should be initialized: eagerly (all before blocks executed immediately) or lazily (all blocks are
+ * executed at almost the same time)
+ */
 enum class InitializationMode {
     EAGER, LAZY
 }
 
+/**
+ * Instantiates and executes whole spec
+ */
 class SpecExecutor<R: RunnerDescription>(
     specClass: Class<out BaseSpec>,
     initializationMode: InitializationMode,
@@ -28,6 +35,9 @@ class SpecExecutor<R: RunnerDescription>(
         }
     }
 
+    /**
+     * Actual tests in spec as [ExecutableCase]s
+     */
     val executables: List<ExecutableCase> by lazy {
         rootSuite.allChildCases.map { ExecutableCase(it, notifier) }
     }

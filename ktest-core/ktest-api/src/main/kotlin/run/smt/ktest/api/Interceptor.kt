@@ -19,10 +19,16 @@ internal object Noop : Boxed {
     override fun invoke() {}
 }
 
+/**
+ * Execute all interceptors that should be executed before test
+ */
 fun List<Interceptor>.execBefore() = forEach { it.before() }
+
+/**
+ * Execute all interceptors that should be executed after test
+ */
 fun List<Interceptor>.execAfter() = reversed().forEach { it.after() }
 
-fun executeOnce(body: () -> Unit): Boxed = SingleExecution(body)
 fun executeEveryTime(body: () -> Unit): Boxed = NormalExecution(body)
 
 data class Interceptor(val before: Boxed = Noop, val after: Boxed = Noop)

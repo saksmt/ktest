@@ -2,6 +2,9 @@ package run.smt.ktest.api.lifecycle
 
 import run.smt.ktest.api.Case
 
+/**
+ * Contains all [CaseLifecycleListener] to supply them events
+ */
 class LifecycleNotifier internal constructor(private val listeners: List<CaseLifecycleListener>) {
     private fun allListeners(action: CaseLifecycleListener.() -> Unit) {
         listeners.forEach(action)
