@@ -118,7 +118,7 @@ class SqlOutputAdapter private constructor(
     fun getObject(columnIndex: Int): Any?
         = source.unify({ it.getObject(columnIndex) }, { it.getObject(columnIndex) })
 
-    fun getObject(columnLabel: String?): Any
+    fun getObject(columnLabel: String?): Any?
         = source.unify({ it.getObject(columnLabel) }, { it.getObject(columnLabel) })
 
     fun getObject(columnIndex: Int, map: MutableMap<String, Class<*>>?): Any
