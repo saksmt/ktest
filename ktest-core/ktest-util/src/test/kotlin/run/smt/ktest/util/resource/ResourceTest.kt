@@ -14,7 +14,7 @@ class ResourceTest {
 
     @Test
     fun `test loadAsString`() {
-        "test-resource".loadAsString() shouldMatch equalTo("hello\n")
+        "test-resource".loadAsString().trimEnd() shouldMatch equalTo("hello")
         assertThat({ "!!!NON EXISTENT!!!".loadAsString() }, throws(isA<NoSuchFileException>()))
     }
 
