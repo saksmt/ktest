@@ -12,45 +12,44 @@ class Suite private constructor(
     val metaData: MetaData = emptySet(),
     initializer: (Suite) -> Unit
 ) {
+    private val _interceptors = mutableListOf<Interceptor>()
     val interceptors
         get() = _interceptors.toList()
+    val inheritedInterceptors: List<Interceptor>
+        get() = _interceptors + parent.unify({ it.inheritedInterceptors }, { emptyList() })
 
     private val _childSuites = mutableListOf<Suite>()
     val childSuites
         get() = _childSuites.toList()
+    val allChildCases: List<Case>
+        get() = _childCases + _childSuites.flatMap { it.allChildCases }
+
     private val _childCases = mutableListOf<Case>()
     val childCases
         get() = _childCases.toList()
-    private val _interceptors = mutableListOf<Interceptor>()
+    val allChildSuites: List<Suite>
+        get() = _childSuites + _childSuites.flatMap { it.allChildSuites }
+
     private val initialization = lazy { Try.of { initializer(this) } }
 
-    constructor(name: String, parent: Suite, metaProperties: MetaData = emptySet(), initializer: (Suite) -> Unit): this(
+    constructor(name: String, parent: Suite, metaProperties: MetaData = emptySet(), initializer: (Suite) -> Unit) : this(
         name,
         left(parent),
         metaProperties,
         initializer
     )
 
-    constructor(name: String, parent: KClass<*>, metaProperties: MetaData = emptySet(), initializer: (Suite) -> Unit): this(
+    constructor(name: String, parent: KClass<*>, metaProperties: MetaData = emptySet(), initializer: (Suite) -> Unit) : this(
         name,
         right(parent),
         metaProperties,
         initializer
     )
 
-    val allChildSuites: List<Suite>
-        get() = _childSuites.toList() + _childSuites.flatMap { it.allChildSuites }
-
-    val allChildCases: List<Case>
-        get() = _childCases.toList() + _childSuites.flatMap { it.allChildCases }
-
     val inheritedMetaData: MetaData
         get() = metaData + parent.unify({ it.inheritedMetaData }, { emptySet() })
 
-    val inheritedInterceptors: List<Interceptor>
-        get() = interceptors + parent.unify({ it.inheritedInterceptors }, { emptyList() })
-
-    val testClass : KClass<*> = parent.unify({ it.testClass }, { it })
+    val testClass: KClass<*> = parent.unify({ it.testClass }, { it })
 
     val fullPath: List<String> = parent.unify({ it.fullPath }, { emptyList() }) + listOf(name)
 
