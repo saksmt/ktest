@@ -1,7 +1,6 @@
 package run.smt.ktest.api
 
 import run.smt.ktest.api.internal.Internals
-import run.smt.ktest.util.collection.partitionBy
 import java.lang.annotation.Repeatable
 import java.time.Duration
 import kotlin.reflect.KClass
@@ -13,12 +12,14 @@ class MetaInfoBuilder internal constructor() {
     private val metaProperties = mutableSetOf<MetaProperty<*>>()
 
     internal fun toMetaProperties(): Set<MetaProperty<*>> {
-        val (annotations, others) = metaProperties.partitionBy { it is AnnotationBasedProperty<*> }
-        val processedAnnotations = normalize(annotations.map { (it as AnnotationBasedProperty<*>).value }).map { AnnotationBasedProperty(it) }
+        val (annotations, others) = metaProperties.partition { it is AnnotationBasedProperty<*> }
+        val processedAnnotations = annotations.map { (it as AnnotationBasedProperty<*>).value }.normalize().map { AnnotationBasedProperty(it) }
         return (processedAnnotations + others).toSet()
     }
 
-    fun Internals.register(property: MetaProperty<*>) { metaProperties += property }
+    fun Internals.register(property: MetaProperty<*>) {
+        metaProperties += property
+    }
 
     fun annotation(value: Annotation) = Internals.register(AnnotationBasedProperty(value))
     inline fun <reified A : Annotation> a(value: Any?) = annotation(_a<A>(value))
@@ -38,22 +39,15 @@ class MetaInfoBuilder internal constructor() {
 
 fun metaInfo(dsl: MetaInfoDSL) = MetaInfoBuilder().apply(dsl).toMetaProperties()
 
+internal fun List<Annotation>.normalize(): List<Annotation> = groupBy { it::class }.flatMap { (clazz, annotations) ->
+    annotations.takeIf { size > 1 }?.let { combine(clazz, it) }?.let { listOf(it) } ?: annotations
+}
 
-internal fun normalize(annotations: List<Annotation>): List<Annotation> {
-    val (normalizable, alreadyNormalized) = annotations.asSequence()
-        .groupBy { it::class }
-        .toList()
-        .partitionBy { it.first.annotations.any { it is Repeatable } && it.second.size > 1 }
-
-    return alreadyNormalized.flatMap { it.second } +
-        normalizable.map { (k, v) ->
-            val wrapper = k.annotations.find { it is Repeatable } as? Repeatable
-                ?: throw IllegalStateException("Can't really happen")
-            _a(wrapper.value, v.toTypedArray())
-        }
+internal fun combine(clazz: KClass<out Annotation>, annotations: List<Annotation>): Annotation? {
+    return clazz.annotations.filterIsInstance<Repeatable>().firstOrNull()?.value?.let { _a(it, annotations.toTypedArray()) }
 }
 
 operator fun MetaInfoDSL.plus(other: MetaInfoDSL): MetaInfoDSL = {
-    this@plus(this)
-    other(this)
+    this@plus()
+    other()
 }
