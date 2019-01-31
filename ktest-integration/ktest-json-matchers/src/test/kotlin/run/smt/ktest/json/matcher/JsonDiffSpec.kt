@@ -56,6 +56,19 @@ object JsonDiffSpec : WordSpec({
             assertThat(diff, isEmpty)
         }
 
+        "not return mismatch for arrays containing equal objects with different field order" {
+            val firstJson = "json-with-array-of-objects1.json".loadAsJsonTree()
+            val secondJson = "json-with-array-of-objects2.json".loadAsJsonTree()
+
+            val comparator = jsonComparator {
+                compareArraysUnordered()
+            }
+
+            val diff = comparator.diff(firstJson, secondJson)
+
+            assertThat(diff, isEmpty)
+        }
+
         "not return mismatch for permutation-based array comparison on arrays with different sort order" {
             val firstJson = "json-with-array.json".loadAsJsonTree()
             val secondJson = "json-with-array-reversed.json".loadAsJsonTree()
